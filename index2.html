@@ -233,8 +233,14 @@
                 return;
               }
               
-              const elecPrice = parseFloat(row['electricity price']);
-              const gasPrice = parseFloat(row['gasoline price']);
+              // Find electricity and gasoline columns flexibly
+              const elecKey = Object.keys(row).find(k => k.toLowerCase().includes('electricity'));
+              const gasKey = Object.keys(row).find(k => k.toLowerCase().includes('gasoline'));
+              
+              console.log('Processing:', state, 'Keys:', elecKey, gasKey, 'Values:', row[elecKey], row[gasKey]);
+              
+              const elecPrice = elecKey ? parseFloat(row[elecKey]) : NaN;
+              const gasPrice = gasKey ? parseFloat(row[gasKey]) : NaN;
               
               if (!isNaN(elecPrice) && !isNaN(gasPrice) && elecPrice > 0 && gasPrice > 0) {
                 newElectricity[state] = elecPrice;
@@ -389,5 +395,4 @@
     recalc();
   </script>
 </body>
-
 </html>
