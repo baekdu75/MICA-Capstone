@@ -233,8 +233,8 @@
                 return;
               }
               
-              const elecPrice = parseFloat(row['Electricity price']);
-              const gasPrice = parseFloat(row['Gasoline Price']);
+              const elecPrice = parseFloat(row['electricity price']);
+              const gasPrice = parseFloat(row['gasoline price']);
               
               if (!isNaN(elecPrice) && !isNaN(gasPrice) && elecPrice > 0 && gasPrice > 0) {
                 newElectricity[state] = elecPrice;
@@ -389,4 +389,5 @@
     recalc();
   </script>
 </body>
+
 </html>
