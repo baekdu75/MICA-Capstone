@@ -15,7 +15,7 @@
     .panel { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
              padding: 16px; border: 1px solid #ececf5; border-radius: 12px; background:#fafafe;}
     label { font-weight: 600; display: block; margin-bottom: 4px; }
-    select, input[type="number"], input[type="file"] {
+    select, input[type="number"] {
       width: 100%; padding: 10px 12px; border:1px solid #dcdceb; border-radius:10px; background:#fff; color:var(--fg);
     }
     input[type="range"] {
@@ -23,14 +23,6 @@
     }
     .hint { color: var(--muted); font-size: 13px; margin-top: 4px; }
     canvas { background:#fff; border:1px solid #ececf5; border-radius:12px; padding:8px; }
-    
-    .file-upload {
-      margin-bottom: 24px;
-      padding: 16px;
-      background: #f5f5fa;
-      border: 1px solid #dcdceb;
-      border-radius: 10px;
-    }
     
     .advanced-toggle {
       margin: 24px 0 12px;
@@ -81,12 +73,6 @@
       cursor: pointer;
       font-weight: normal;
     }
-    .slider-value {
-      display: inline-block;
-      font-weight: 600;
-      color: var(--accent);
-      margin-left: 8px;
-    }
     .status {
       padding: 8px 12px;
       border-radius: 8px;
@@ -108,7 +94,7 @@
 <body>
   <div class="wrap">
     <h1>Cost of Ownership — EV vs. Gas</h1>
-    <p class="hint">Upload your CSV file or use the default data. Change state and annual miles to see cost comparisons.</p>
+    <p class="hint">Change state and annual miles to see cost comparisons.</p>
 
     <div id="csvStatus"></div>
 
@@ -167,14 +153,8 @@
 
   <script>
     // --- Data storage -------------------------
-    let electricityCentsPerKwhByState = {
-      "Alabama": 11.47, "Alaska": 21.41, "Arizona": 12.19, "Arkansas": 9.73,
-      "California": 24.87, "Colorado": 11.76, "Connecticut": 24.24
-    };
-    let gasolinePerGallonByState = {
-      "Alabama": 2.751, "Alaska": 3.874, "Arizona": 3.488, "Arkansas": 2.881,
-      "California": 4.663, "Colorado": 2.934, "Connecticut": 3.086
-    };
+    let electricityCentsPerKwhByState = {};
+    let gasolinePerGallonByState = {};
 
     // Default assumptions
     const DEFAULTS = {
@@ -196,17 +176,16 @@
     
     function populateStateDropdown() {
       stateSel.innerHTML = '';
-      Object.keys(electricityCentsPerKwhByState).sort().forEach(s => {
+      const states = Object.keys(electricityCentsPerKwhByState).sort();
+      states.forEach(s => {
         const o = document.createElement('option');
         o.value = o.textContent = s;
         stateSel.appendChild(o);
       });
-      if (stateSel.options.length > 0) {
-        stateSel.value = stateSel.options[0].value;
+      if (states.length > 0) {
+        stateSel.value = states[0];
       }
     }
-    
-    populateStateDropdown();
 
     // Automatically load CSV file on page load
     window.addEventListener('DOMContentLoaded', function() {
@@ -218,53 +197,47 @@
         download: true,
         header: true,
         skipEmptyLines: true,
-        dynamicTyping: false,
         complete: function(results) {
-          try {
-            const newElectricity = {};
-            const newGasoline = {};
-            let successCount = 0;
+          console.log('CSV loaded, rows:', results.data.length);
+          console.log('Headers:', results.meta.fields);
+          
+          const newElectricity = {};
+          const newGasoline = {};
+          let successCount = 0;
+          
+          results.data.forEach((row, index) => {
+            const state = row.state ? row.state.trim() : null;
             
-            results.data.forEach(row => {
-              const state = row.State ? row.State.trim() : null;
-              
-              // Skip invalid rows
-              if (!state || state === '' || state === 'U.S. Total' || state.includes('Other state')) {
-                return;
-              }
-              
-              // Find electricity and gasoline columns flexibly
-              const elecKey = Object.keys(row).find(k => k.toLowerCase().includes('electricity'));
-              const gasKey = Object.keys(row).find(k => k.toLowerCase().includes('gasoline'));
-              
-              console.log('Processing:', state, 'Keys:', elecKey, gasKey, 'Values:', row[elecKey], row[gasKey]);
-              
-              const elecPrice = elecKey ? parseFloat(row[elecKey]) : NaN;
-              const gasPrice = gasKey ? parseFloat(row[gasKey]) : NaN;
-              
-              if (!isNaN(elecPrice) && !isNaN(gasPrice) && elecPrice > 0 && gasPrice > 0) {
-                newElectricity[state] = elecPrice;
-                newGasoline[state] = gasPrice;
-                successCount++;
-              }
-            });
-            
-            if (successCount > 0) {
-              electricityCentsPerKwhByState = newElectricity;
-              gasolinePerGallonByState = newGasoline;
-              populateStateDropdown();
-              recalc();
-              csvStatus.innerHTML = `<div class="status success">✓ Loaded data for ${successCount} states</div>`;
-              setTimeout(() => { csvStatus.innerHTML = ''; }, 3000);
-            } else {
-              csvStatus.innerHTML = '<div class="status error">✗ No valid data found in CSV. Using default data.</div>';
+            if (!state || state === '') {
+              return;
             }
-          } catch (error) {
-            csvStatus.innerHTML = `<div class="status error">✗ Error parsing CSV: ${error.message}. Using default data.</div>`;
+            
+            const elecPrice = parseFloat(row['electricity price']);
+            const gasPrice = parseFloat(row['gasoline price']);
+            
+            if (!isNaN(elecPrice) && !isNaN(gasPrice) && elecPrice > 0 && gasPrice > 0) {
+              newElectricity[state] = elecPrice;
+              newGasoline[state] = gasPrice;
+              successCount++;
+              console.log(`Loaded: ${state} - Elec: ${elecPrice}, Gas: ${gasPrice}`);
+            } else {
+              console.log(`Skipped row ${index}: ${state} - Elec: ${elecPrice}, Gas: ${gasPrice}`);
+            }
+          });
+          
+          if (successCount > 0) {
+            electricityCentsPerKwhByState = newElectricity;
+            gasolinePerGallonByState = newGasoline;
+            populateStateDropdown();
+            recalc();
+            csvStatus.innerHTML = `<div class="status success">✓ Loaded data for ${successCount} states</div>`;
+            setTimeout(() => { csvStatus.innerHTML = ''; }, 3000);
+          } else {
+            csvStatus.innerHTML = '<div class="status error">✗ No valid data found in CSV.</div>';
           }
         },
         error: function(error) {
-          csvStatus.innerHTML = `<div class="status error">✗ CSV file not found. Using default data.</div>`;
+          csvStatus.innerHTML = `<div class="status error">✗ CSV file not found: ${error.message}</div>`;
           console.error('CSV load error:', error);
         }
       });
@@ -392,7 +365,11 @@
     
     inputs.forEach(el => el.addEventListener('input', recalc));
     inputs.forEach(el => el.addEventListener('change', recalc));
-    recalc();
+    
+    // Initial calculation
+    if (Object.keys(electricityCentsPerKwhByState).length > 0) {
+      recalc();
+    }
   </script>
 </body>
 </html>
