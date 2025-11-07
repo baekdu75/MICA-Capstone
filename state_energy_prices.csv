@@ -1,5 +1,4 @@
-State,Electricity price,"Gasoline Price 
-(USD per gal)"
+state,electricity price,"gasoline price"
 Alabama,11.47,2.751
 Alaska,21.41,3.874
 Arizona,12.19,3.488
@@ -51,3 +50,4 @@ Washington,9.58,4.482
 West Virginia,10.26,2.961
 Wisconsin,12.72,2.724
 Wyoming,8.39,3.05
+
