@@ -176,15 +176,19 @@
     
     function populateStateDropdown() {
       stateSel.innerHTML = '';
+      // Add empty option first
+      const emptyOption = document.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = '-- Select a state --';
+      stateSel.appendChild(emptyOption);
+      
       const states = Object.keys(electricityCentsPerKwhByState).sort();
       states.forEach(s => {
         const o = document.createElement('option');
         o.value = o.textContent = s;
         stateSel.appendChild(o);
       });
-      if (states.length > 0) {
-        stateSel.value = states[0];
-      }
+      stateSel.value = '';
     }
 
     // Automatically load CSV file on page load
