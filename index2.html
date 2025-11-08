@@ -12,83 +12,32 @@
     body { font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial; color:var(--fg); background:var(--bg); margin:0; }
     .wrap { max-width: 960px; margin: 32px auto; padding: 0 16px; }
     h1 { margin: 0 0 8px; }
-    .panel { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    .panel { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
              padding: 16px; border: 1px solid #ececf5; border-radius: 12px; background:#fafafe;}
     label { font-weight: 600; display: block; margin-bottom: 4px; }
     select, input[type="number"] {
       width: 100%; padding: 10px 12px; border:1px solid #dcdceb; border-radius:10px; background:#fff; color:var(--fg);
     }
-    input[type="range"] {
-      width: 100%;
-    }
+    input[type="range"] { width: 100%; }
     .hint { color: var(--muted); font-size: 13px; margin-top: 4px; }
     canvas { background:#fff; border:1px solid #ececf5; border-radius:12px; padding:8px; }
-    
+
     .advanced-toggle {
-      margin: 24px 0 12px;
-      padding: 12px 16px;
-      background: #f5f5fa;
-      border: 1px solid #dcdceb;
-      border-radius: 10px;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      margin: 24px 0 12px; padding: 12px 16px; background:#f5f5fa; border:1px solid #dcdceb;
+      border-radius:10px; cursor:pointer; user-select:none; display:flex; align-items:center; justify-content:space-between;
     }
-    .advanced-toggle:hover {
-      background: #ececf5;
-    }
-    .advanced-toggle-title {
-      font-weight: 600;
-      font-size: 15px;
-    }
-    .advanced-toggle-arrow {
-      transition: transform 0.2s;
-      font-size: 18px;
-    }
-    .advanced-toggle-arrow.open {
-      transform: rotate(180deg);
-    }
-    .advanced-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease-out;
-    }
-    .advanced-content.open {
-      max-height: 500px;
-    }
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .checkbox-container input[type="checkbox"] {
-      width: auto;
-      cursor: pointer;
-    }
-    .checkbox-container label {
-      margin: 0;
-      cursor: pointer;
-      font-weight: normal;
-    }
-    .status {
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      margin-bottom: 16px;
-    }
-    .status.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-    .status.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
+    .advanced-toggle:hover { background:#ececf5; }
+    .advanced-toggle-title { font-weight:600; font-size:15px; }
+    .advanced-toggle-arrow { transition: transform 0.2s; font-size:18px; }
+    .advanced-toggle-arrow.open { transform: rotate(180deg); }
+    .advanced-content { max-height:0; overflow:hidden; transition:max-height 0.3s ease-out; }
+    .advanced-content.open { max-height:500px; }
+    .checkbox-container { display:flex; align-items:center; gap:8px; margin-top:8px; }
+    .checkbox-container input[type="checkbox"] { width:auto; cursor:pointer; }
+    .checkbox-container label { margin:0; cursor:pointer; font-weight:normal; }
+    .status { padding:8px 12px; border-radius:8px; font-size:14px; margin-bottom:16px; }
+    .status.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+    .status.error   { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
   </style>
 </head>
 <body>
@@ -132,17 +81,17 @@
             <label for="needsCharger">Yes</label>
           </div>
         </div>
-        <div id="chargerCostContainer" style="display: none;">
+        <div id="chargerCostContainer" style="display:none;">
           <label for="chargerCost">Charger installation cost ($)</label>
           <input id="chargerCost" type="number" value="1500" min="0" step="100" />
           <div class="hint">Average installation cost: $1,000–$2,500</div>
         </div>
-        <div style="grid-column: 1 / -1; height: 1px; background: #dcdceb; margin: 8px 0;"></div>
+        <div style="grid-column:1/-1; height:1px; background:#dcdceb; margin:8px 0;"></div>
         <div>
           <label for="homeChargePct">What percentage of charging will you do at home?</label>
           <input id="homeChargePct" type="range" min="0" max="100" value="80" />
           <div class="hint">
-            <span id="homeChargePctValue">80</span>% at home, 
+            <span id="homeChargePctValue">80</span>% at home,
             <span id="publicChargePctValue">20</span>% at public stations (charged at $0.50/kWh)
           </div>
         </div>
@@ -154,11 +103,10 @@
   </div>
 
   <script>
-    // --- Data storage -------------------------
+    // ---------------- Data & defaults ----------------
     let electricityCentsPerKwhByState = {};
     let gasolinePerGallonByState = {};
 
-    // Default assumptions
     const DEFAULTS = {
       evKwhPer100: 28,
       hybridMpg: 50,
@@ -169,237 +117,43 @@
       maintEV: 25,
       maintHybrid: 45,
       maintGas: 60,
-      chargerLifeMonths: 120 // 10 years amortization
+      chargerLifeMonths: 120 // 10 years
     };
 
-    // Build state dropdown
-    const stateSel = document.getElementById('state');
-    const csvStatus = document.getElementById('csvStatus');
-    
+    const $ = id => document.getElementById(id);
+
+    // ---------------- State dropdown ----------------
     function populateStateDropdown() {
-      stateSel.innerHTML = '';
-      // Add empty option first
+      const sel = $('state');
+      sel.innerHTML = '';
       const emptyOption = document.createElement('option');
       emptyOption.value = '';
       emptyOption.textContent = '-- Select a state --';
-      stateSel.appendChild(emptyOption);
-      
+      sel.appendChild(emptyOption);
+
       const states = Object.keys(electricityCentsPerKwhByState).sort();
       states.forEach(s => {
         const o = document.createElement('option');
         o.value = o.textContent = s;
-        stateSel.appendChild(o);
+        sel.appendChild(o);
       });
-      stateSel.value = '';
+      sel.value = '';
     }
 
-    // Automatically load CSV file on page load
+    // ---------------- CSV load ----------------
+    const csvStatus = $('csvStatus');
+
     window.addEventListener('DOMContentLoaded', function() {
       const csvFileName = 'state_energy_prices.csv';
-      
       csvStatus.innerHTML = '<div class="status">Loading state data...</div>';
-      
+
       Papa.parse(csvFileName, {
         download: true,
         header: true,
         skipEmptyLines: true,
+        transformHeader: h => h.replace(/^\uFEFF/, '').trim(), // strip BOM + trim
         complete: function(results) {
-          console.log('CSV loaded, rows:', results.data.length);
-          console.log('Headers:', results.meta.fields);
-          
           const newElectricity = {};
-          const newGasoline = {};
-          let successCount = 0;
-          
-          results.data.forEach((row, index) => {
-            const state = row.state ? row.state.trim() : null;
+          const newGasoline = {
+
             
-            if (!state || state === '') {
-              return;
-            }
-            
-            const elecPrice = parseFloat(row['electricity price']);
-            const gasPrice = parseFloat(row['gasoline price']);
-            
-            if (!isNaN(elecPrice) && !isNaN(gasPrice) && elecPrice > 0 && gasPrice > 0) {
-              newElectricity[state] = elecPrice;
-              newGasoline[state] = gasPrice;
-              successCount++;
-              console.log(`Loaded: ${state} - Elec: ${elecPrice}, Gas: ${gasPrice}`);
-            } else {
-              console.log(`Skipped row ${index}: ${state} - Elec: ${elecPrice}, Gas: ${gasPrice}`);
-            }
-          });
-          
-          if (successCount > 0) {
-            electricityCentsPerKwhByState = newElectricity;
-            gasolinePerGallonByState = newGasoline;
-            populateStateDropdown();
-            recalc();
-            csvStatus.innerHTML = `<div class="status success">✓ Loaded data for ${successCount} states</div>`;
-            setTimeout(() => { csvStatus.innerHTML = ''; }, 3000);
-          } else {
-            csvStatus.innerHTML = '<div class="status error">✗ No valid data found in CSV.</div>';
-          }
-        },
-        error: function(error) {
-          csvStatus.innerHTML = `<div class="status error">✗ CSV file not found: ${error.message}</div>`;
-          console.error('CSV load error:', error);
-        }
-      });
-    });
-
-    // Advanced toggle
-    const advToggle = document.getElementById('advancedToggle');
-    const advContent = document.getElementById('advancedContent');
-    const advArrow = advToggle.querySelector('.advanced-toggle-arrow');
-    
-    advToggle.addEventListener('click', () => {
-      advContent.classList.toggle('open');
-      advArrow.classList.toggle('open');
-    });
-
-    // Charger checkbox toggle
-    const needsCharger = document.getElementById('needsCharger');
-    const chargerCostContainer = document.getElementById('chargerCostContainer');
-    
-    needsCharger.addEventListener('change', () => {
-      chargerCostContainer.style.display = needsCharger.checked ? 'block' : 'none';
-      recalc();
-    });
-
-    // Slider display
-    const homeSlider = document.getElementById('homeChargePct');
-    const homeVal = document.getElementById('homeChargePctValue');
-    const publicVal = document.getElementById('publicChargePctValue');
-    
-    homeSlider.addEventListener('input', () => {
-      const val = homeSlider.value;
-      homeVal.textContent = val;
-      publicVal.textContent = 100 - val;
-      recalc();
-    });
-
-    // --- Core formulas --------------------------------------------------------
-    function monthlyCosts({
-      state, annualMiles, needsCharger, chargerCost, homeChargePct
-    }) {
-      const homeKwhPrice = (electricityCentsPerKwhByState[state] ?? 15) / 100; // $/kWh
-      const gasPrice = gasolinePerGallonByState[state] ?? 3.5; // $/gal
-      const publicChargeRate = 0.50; // Fixed rate for public charging
-
-      // EV charging calculation
-      const ev_kwh_year = (DEFAULTS.evKwhPer100 / 100) * annualMiles;
-      const homeChargeFraction = homeChargePct / 100;
-      const publicChargeFraction = 1 - homeChargeFraction;
-      
-      const homeChargeYear = ev_kwh_year * homeChargeFraction * homeKwhPrice;
-      const publicChargeYear = ev_kwh_year * publicChargeFraction * publicChargeRate;
-      const evFuelYear = homeChargeYear + publicChargeYear;
-
-      // Hybrid calculation
-      const hybrid_gal_year = annualMiles / DEFAULTS.hybridMpg;
-      const hybridFuelYear = hybrid_gal_year * gasPrice;
-
-      // Gas calculation
-      const gas_gal_year = annualMiles / DEFAULTS.mpg;
-      const gasFuelYear = gas_gal_year * gasPrice;
-
-      // Monthly costs
-      const evFuelMonth = evFuelYear / 12;
-      const hybridFuelMonth = hybridFuelYear / 12;
-      const gasFuelMonth = gasFuelYear / 12;
-
-      // Add charger cost if needed
-      const chargerMonthly = needsCharger ? chargerCost / DEFAULTS.chargerLifeMonths : 0;
-
-      const evTotal = evFuelMonth + DEFAULTS.insEV + DEFAULTS.maintEV + chargerMonthly;
-      const hybridTotal = hybridFuelMonth + DEFAULTS.insHybrid + DEFAULTS.maintHybrid;
-      const gasTotal = gasFuelMonth + DEFAULTS.insGas + DEFAULTS.maintGas;
-
-      return { evFuelMonth, hybridFuelMonth, gasFuelMonth, evTotal, hybridTotal, gasTotal, chargerMonthly };
-    }
-
-    // --- Chart setup ----------------------------------------------------------
-    const ctx = document.getElementById('chart');
-    const chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['EV','Hybrid','Gasoline'],
-        datasets: [
-          { label:'Fuel/Charge', data:[0,0,0], backgroundColor:'#7c6cf3' },
-          { label:'Insurance',   data:[0,0,0], backgroundColor:'#b9a7ff' },
-          { label:'Maintenance', data:[0,0,0], backgroundColor:'#e1d8ff' },
-          { label:'Charger (amortized)', data:[0,0,0], backgroundColor:'#ffa07a' }
-        ]
-      },
-      options: {
-        responsive:true,
-        scales: {
-          x: { stacked:true },
-          y: { stacked:true, beginAtZero:true, title:{ display:true, text:'$/month'} }
-        },
-        plugins: {
-          legend: { position:'bottom' },
-          tooltip: { mode:'index', intersect:false }
-        }
-      }
-    });
-
-    // --- Bind inputs & update loop -------------------------------------------
-    const $ = id => document.getElementById(id);
-    const inputs = ['state','miles','needsCharger','chargerCost','homeChargePct'].map($);
-
-    function fmt(n){ return '
-
-      // Update stacked bars
-      chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
-      chart.data.datasets[1].data = [DEFAULTS.insEV, DEFAULTS.insHybrid, DEFAULTS.insGas];
-      chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
-      chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
-      chart.update();
-    }
-    
-    inputs.forEach(el => {
-      if (el) {
-        el.addEventListener('input', recalc);
-        el.addEventListener('change', recalc);
-      }
-    });
-  </script>
-</body>
-</html> + n.toFixed(0); }
-
-    function recalc() {
-      // Check if both state and miles are selected
-      if (!$('state').value || !$('miles').value) {
-        // Don't calculate if required fields are empty
-        return;
-      }
-      
-      const result = monthlyCosts({
-        state: $('state').value,
-        annualMiles: +$('miles').value,
-        needsCharger: $('needsCharger').checked,
-        chargerCost: +$('chargerCost').value,
-        homeChargePct: +$('homeChargePct').value
-      });
-
-      // Update stacked bars
-      chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
-      chart.data.datasets[1].data = [DEFAULTS.insEV, DEFAULTS.insHybrid, DEFAULTS.insGas];
-      chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
-      chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
-      chart.update();
-    }
-    
-    inputs.forEach(el => el.addEventListener('input', recalc));
-    inputs.forEach(el => el.addEventListener('change', recalc));
-    
-    // Initial calculation
-    if (Object.keys(electricityCentsPerKwhByState).length > 0) {
-      recalc();
-    }
-  </script>
-</body>
-</html>
