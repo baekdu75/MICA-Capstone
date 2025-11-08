@@ -144,12 +144,7 @@
           </div>
           <div class="hint">Select "Yes" if you need to install a charger at home.</div>
         </div>
-        <div id="chargerCostContainer" style="display: none;">
-          <label for="chargerCost">Charger installation cost ($)</label>
-          <input id="chargerCost" type="number" value="1500" min="0" step="100" />
-          <div class="hint">Average installation cost: $1,000–$2,500</div>
-        </div>
-        
+       
         <div>
           <label for="homeChargePct">What percentage of charging will you do at home?</label>
           <input id="homeChargePct" type="range" min="0" max="100" value="80" />
@@ -299,11 +294,12 @@
 
     // --- Core formulas --------------------------------------------------------
     function monthlyCosts({
-      state, annualMiles, needsCharger, chargerCost, homeChargePct
+      state, annualMiles, needsCharger, homeChargePct
     }) {
       const homeKwhPrice = (electricityCentsPerKwhByState[state] ?? 15) / 100; // $/kWh
       const gasPrice = gasolinePerGallonByState[state] ?? 3.5; // $/gal
       const publicChargeRate = 0.50; // Fixed at $0.50/kWh
+      cost chargerCost =1500;
 
       // EV charging calculation
       const ev_kwh_year = (DEFAULTS.evKwhPer100 / 100) * annualMiles;
@@ -400,3 +396,4 @@
   </script>
 </body>
 </html>
+
