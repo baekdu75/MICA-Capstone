@@ -104,13 +104,27 @@
         <select id="state"></select>
         <div class="hint">Select to get average electricity and gas prices.</div>
       </div>
+      <!--
       <div>
         <label for="miles">Annual miles</label>
         <input id="miles" type="number" value="12000" min="1000" step="500" />
         <div class="hint">Typical U.S. driver ≈ 12,000–15,000 miles/year.</div>
       </div>
     </div>
-
+    -->
+    <div>
+        <label for="miles">Driving Profile</label>
+        <select id="miles">
+          <option value="">-- Select your driving profile --</option>
+          <option value="4000">Minimal (≤5,000 mi/yr) - Walk/transit, short errands, 1-2 days/week</option>
+          <option value="7000">Light (5,001-8,000 mi/yr) - Local commute, 2-3 days/week, few trips</option>
+          <option value="10000">Typical (8,001-12,000 mi/yr) - Standard usage, 4-5 days/week</option>
+          <option value="13000">Heavy Commute (12,001-15,000 mi/yr) - Daily commute, longer drives</option>
+          <option value="18000">High Mileage (15,001-20,000+ mi/yr) - Sales/field work, frequent trips</option>
+        </select>
+        <div class="hint">Select the profile that best matches your driving habits.</div>
+      </div>
+      
     <div class="advanced-toggle" id="advancedToggle">
       <span class="advanced-toggle-title">⚙️ Advanced Configuration</span>
       <span class="advanced-toggle-arrow">▼</span>
@@ -377,3 +391,4 @@
   </script>
 </body>
 </html>
+
