@@ -360,14 +360,15 @@
       chart.update();
     }
     
-    inputs.forEach(el => el.addEventListener('input', recalc));
-    inputs.forEach(el => el.addEventListener('change', recalc));
-    
-    // Initial calculation
-    if (Object.keys(electricityCentsPerKwhByState).length > 0) {
-      recalc();
-    }
-  + n.toFixed(0); }
+    inputs.forEach(el => {
+      if (el) {
+        el.addEventListener('input', recalc);
+        el.addEventListener('change', recalc);
+      }
+    });
+  </script>
+</body>
+</html> + n.toFixed(0); }
 
     function recalc() {
       // Check if both state and miles are selected
