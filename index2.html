@@ -104,11 +104,10 @@
 
     <div class="panel">
       <div>
-        <label for="state">Select your state of residence</label>
+        <label for="state">State</label>
         <select id="state"></select>
-        <div class="hint">We’ll use your state’s average residential electricity rate and gas price.</div>
+        <div class="hint">Select to get average electricity and gas prices.</div>
       </div>
-      
       <div>
         <label for="miles">Driving Profile</label>
         <select id="miles">
@@ -131,26 +130,25 @@
     <div class="advanced-content" id="advancedContent">
       <div class="panel">
         <div>
-          <label>Do you need to install a home EV charger?</label>
+          <label>Need EV Charger installed at home?</label>
           <div class="radio-container">
             <div class="radio-option">
               <input type="radio" id="needsChargerYes" name="needsCharger" value="yes" />
               <label for="needsChargerYes">Yes</label>
             </div>
             <div class="radio-option">
-              <input type="radio" id="needsChargerNo" name="needsCharger" value="no" checked/>
+              <input type="radio" id="needsChargerNo" name="needsCharger" value="no" checked />
               <label for="needsChargerNo">No</label>
             </div>
           </div>
-          <div class="hint">Average EV charger installation cost is around $1,500.</div>
+          <div class="hint">Select "Yes" if you need to install a charger at home.</div>
         </div>
-        <!--
         <div id="chargerCostContainer" style="display: none;">
           <label for="chargerCost">Charger installation cost ($)</label>
           <input id="chargerCost" type="number" value="1500" min="0" step="100" />
           <div class="hint">Average installation cost: $1,000–$2,500</div>
         </div>
-        -->
+        <div style="grid-column: 1 / -1; height: 1px; background: #dcdceb; margin: 8px 0;"></div>
         <div>
           <label for="homeChargePct">What percentage of charging will you do at home?</label>
           <input id="homeChargePct" type="range" min="0" max="100" value="80" />
@@ -366,9 +364,11 @@
 
     // --- Bind inputs & update loop -------------------------------------------
     const $ = id => document.getElementById(id);
-    const inputs = ['state','miles','needsChargerYes','needsChargerNo','chargerCost','homeChargePct'].map($);
-
-    function fmt(n){ return '$' + n.toFixed(0); }
+    
+    function fmt(n){ return '
+  </script>
+</body>
+</html> + n.toFixed(0); }
 
     function recalc() {
       // Check if both state and miles are selected
@@ -380,7 +380,7 @@
         state: $('state').value,
         annualMiles: +$('miles').value,
         needsCharger: $('needsChargerYes').checked,
-        chargerCost: +$('chargerCost').value,
+        chargerCost: 1500, // Fixed at $1500
         homeChargePct: +$('homeChargePct').value
       });
 
@@ -392,12 +392,12 @@
       chart.update();
     }
     
-    inputs.forEach(el => {
-      if (el) {
-        el.addEventListener('input', recalc);
-        el.addEventListener('change', recalc);
-      }
-    });
+    // Bind events
+    $('state').addEventListener('change', recalc);
+    $('miles').addEventListener('change', recalc);
+    $('needsChargerYes').addEventListener('change', recalc);
+    $('needsChargerNo').addEventListener('change', recalc);
+    $('homeChargePct').addEventListener('input', recalc);
   </script>
 </body>
 </html>
