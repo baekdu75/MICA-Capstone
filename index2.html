@@ -104,10 +104,18 @@
         <select id="state"></select>
         <div class="hint">Select to get average electricity and gas prices.</div>
       </div>
+      <br>
       <div>
-        <label for="miles">Annual miles</label>
-        <input id="miles" type="number" value="12000" min="1000" step="500" />
-        <div class="hint">Typical U.S. driver ≈ 12,000–15,000 miles/year.</div>
+        <label for="miles">Driving Profile</label>
+        <select id="miles">
+          <option value="">-- Select your driving profile --</option>
+          <option value="4000">Minimal - 4,000 miles/yr</option>
+          <option value="7000">Light - 7,000 miles/yr</option>
+          <option value="10000">Typical - 10,000 miles/yr</option>
+          <option value="13000">Heavy Commute - 12,000 miles/yr</option>
+          <option value="18000">High Mileage - 18000 miles/yr</option>
+        </select>
+        <div class="hint">Select the profile that best matches your driving habits.</div>
       </div>
     </div>
 
@@ -119,30 +127,25 @@
     <div class="advanced-content" id="advancedContent">
       <div class="panel">
         <div>
-          <label>EV Charger at Home</label>
+          <label>Need to install EV Charger?</label>
           <div class="checkbox-container">
-            <input type="checkbox" id="hasCharger" checked />
-            <label for="hasCharger">I already have an EV charger at home</label>
+            <input type="checkbox" id="needsCharger" />
+            <label for="needsCharger">Yes</label>
           </div>
-          <div class="hint">If unchecked, we'll include installation cost estimates.</div>
         </div>
         <div id="chargerCostContainer" style="display: none;">
           <label for="chargerCost">Charger installation cost ($)</label>
           <input id="chargerCost" type="number" value="1500" min="0" step="100" />
           <div class="hint">Average installation cost: $1,000–$2,500</div>
         </div>
+        <div style="grid-column: 1 / -1; height: 1px; background: #dcdceb; margin: 8px 0;"></div>
         <div>
-          <label for="homeChargePct">Home charging vs. Public charging station</label>
+          <label for="homeChargePct">What percentage of charging will you do at home?</label>
           <input id="homeChargePct" type="range" min="0" max="100" value="80" />
           <div class="hint">
             <span id="homeChargePctValue">80</span>% at home, 
-            <span id="publicChargePctValue">20</span>% at public stations
+            <span id="publicChargePctValue">20</span>% at public stations (charged at $0.50/kWh)
           </div>
-        </div>
-        <div>
-          <label for="publicChargeRate">Public charging rate ($/kWh)</label>
-          <input id="publicChargeRate" type="number" value="0.45" min="0.1" max="1" step="0.05" />
-          <div class="hint">Typical fast charger: $0.40–$0.60/kWh</div>
         </div>
       </div>
     </div>
@@ -258,11 +261,11 @@
     });
 
     // Charger checkbox toggle
-    const hasCharger = document.getElementById('hasCharger');
+    const needsCharger = document.getElementById('needsCharger');
     const chargerCostContainer = document.getElementById('chargerCostContainer');
     
-    hasCharger.addEventListener('change', () => {
-      chargerCostContainer.style.display = hasCharger.checked ? 'none' : 'block';
+    needsCharger.addEventListener('change', () => {
+      chargerCostContainer.style.display = needsCharger.checked ? 'block' : 'none';
       recalc();
     });
 
@@ -280,10 +283,11 @@
 
     // --- Core formulas --------------------------------------------------------
     function monthlyCosts({
-      state, annualMiles, hasCharger, chargerCost, homeChargePct, publicChargeRate
+      state, annualMiles, needsCharger, chargerCost, homeChargePct
     }) {
       const homeKwhPrice = (electricityCentsPerKwhByState[state] ?? 15) / 100; // $/kWh
       const gasPrice = gasolinePerGallonByState[state] ?? 3.5; // $/gal
+      const publicChargeRate = 0.50; // Fixed rate for public charging
 
       // EV charging calculation
       const ev_kwh_year = (DEFAULTS.evKwhPer100 / 100) * annualMiles;
@@ -308,7 +312,7 @@
       const gasFuelMonth = gasFuelYear / 12;
 
       // Add charger cost if needed
-      const chargerMonthly = hasCharger ? 0 : chargerCost / DEFAULTS.chargerLifeMonths;
+      const chargerMonthly = needsCharger ? chargerCost / DEFAULTS.chargerLifeMonths : 0;
 
       const evTotal = evFuelMonth + DEFAULTS.insEV + DEFAULTS.maintEV + chargerMonthly;
       const hybridTotal = hybridFuelMonth + DEFAULTS.insHybrid + DEFAULTS.maintHybrid;
@@ -345,18 +349,42 @@
 
     // --- Bind inputs & update loop -------------------------------------------
     const $ = id => document.getElementById(id);
-    const inputs = ['state','miles','hasCharger','chargerCost','homeChargePct','publicChargeRate'].map($);
+    const inputs = ['state','miles','needsCharger','chargerCost','homeChargePct'].map($);
 
-    function fmt(n){ return '$' + n.toFixed(0); }
+    function fmt(n){ return '
+
+      // Update stacked bars
+      chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
+      chart.data.datasets[1].data = [DEFAULTS.insEV, DEFAULTS.insHybrid, DEFAULTS.insGas];
+      chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
+      chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+      chart.update();
+    }
+    
+    inputs.forEach(el => el.addEventListener('input', recalc));
+    inputs.forEach(el => el.addEventListener('change', recalc));
+    
+    // Initial calculation
+    if (Object.keys(electricityCentsPerKwhByState).length > 0) {
+      recalc();
+    }
+  </script>
+</body>
+</html> + n.toFixed(0); }
 
     function recalc() {
+      // Check if both state and miles are selected
+      if (!$('state').value || !$('miles').value) {
+        // Don't calculate if required fields are empty
+        return;
+      }
+      
       const result = monthlyCosts({
         state: $('state').value,
         annualMiles: +$('miles').value,
-        hasCharger: $('hasCharger').checked,
+        needsCharger: $('needsCharger').checked,
         chargerCost: +$('chargerCost').value,
-        homeChargePct: +$('homeChargePct').value,
-        publicChargeRate: +$('publicChargeRate').value
+        homeChargePct: +$('homeChargePct').value
       });
 
       // Update stacked bars
