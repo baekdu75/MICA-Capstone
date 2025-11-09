@@ -82,14 +82,31 @@
           </div>
           <div class="hint">If yes, we’ll add an estimated $1,500 installation cost (amortized).</div>
         </div>
+
         <div>
           <label for="homeChargePct">What percentage of charging will you do at home?</label>
           <input id="homeChargePct" type="range" min="0" max="100" value="80" />
           <div class="hint">
-            <span id="homeChargePctValue">80</span>% at home, 
+            <span id="homeChargePctValue">80</span>% at home,
             <span id="publicChargePctValue">20</span>% at public stations (charged at $0.50/kWh)
           </div>
         </div>
+
+        <!-- NEW: EV model selection -->
+        <div>
+          <label for="evModel">Which EV are you planning to buy?</label>
+          <select id="evModel">
+            <option value="">-- Select an EV model --</option>
+            <option value="Model 3">Tesla Model 3</option>
+            <option value="Model Y">Tesla Model Y</option>
+            <option value="Model S">Tesla Model S</option>
+            <option value="Model X">Tesla Model X</option>
+          </select>
+          <div class="hint">
+            Insurance adjusts by model. Hybrid/Gas comparison uses $2,310/yr for Model 3/Y, and $2,817/yr for Model S/X.
+          </div>
+        </div>
+        <!-- /NEW -->
       </div>
     </div>
 
@@ -107,6 +124,7 @@
       evKwhPer100: 28,
       hybridMpg: 50,
       mpg: 30,
+      // Baseline monthly values (used only if no model is selected)
       insEV: 140,
       insHybrid: 130,
       insGas: 120,
@@ -114,6 +132,14 @@
       maintHybrid: 45,
       maintGas: 60,
       chargerLifeMonths: 120 // 10 years
+    };
+
+    // NEW: Insurance mapping (annual -> converted to monthly in code)
+    const INSURANCE_BY_MODEL = {
+      'Model 3': { evYear: 4298, compYear: 2310 }, // compYear applies to Hybrid & Gas
+      'Model Y': { evYear: 4003, compYear: 2310 },
+      'Model S': { evYear: 3718, compYear: 2817 },
+      'Model X': { evYear: 4270, compYear: 2817 }
     };
 
     const $ = id => document.getElementById(id);
@@ -211,6 +237,25 @@
       recalc();
     });
 
+    // ---------- NEW: EV model -> insurance helper ----------
+    function getInsuranceMonthly() {
+      const model = $('evModel').value;
+      if (model && INSURANCE_BY_MODEL[model]) {
+        const { evYear, compYear } = INSURANCE_BY_MODEL[model];
+        return {
+          ev: evYear / 12,
+          hybrid: compYear / 12,
+          gas: compYear / 12
+        };
+      }
+      // Fallback to DEFAULTS monthly values when no model selected
+      return {
+        ev: DEFAULTS.insEV,
+        hybrid: DEFAULTS.insHybrid,
+        gas: DEFAULTS.insGas
+      };
+    }
+
     // ---------- Math ----------
     function monthlyCosts({ state, annualMiles, needsCharger, homeChargePct }) {
       const homeKwhPrice = (electricityCentsPerKwhByState[state] ?? 15) / 100; // $/kWh
@@ -232,14 +277,11 @@
       const hybridFuelMonth = hybridFuelYear / 12;
       const gasFuelMonth    = gasFuelYear / 12;
 
-      // Hard-coded charger cost amortized over 10 years if user needs one
+      // Charger amortization if needed
       const chargerMonthly = needsCharger ? (CHARGER_COST / DEFAULTS.chargerLifeMonths) : 0;
 
-      const evTotal     = evFuelMonth + DEFAULTS.insEV + DEFAULTS.maintEV + chargerMonthly;
-      const hybridTotal = hybridFuelMonth + DEFAULTS.insHybrid + DEFAULTS.maintHybrid;
-      const gasTotal    = gasFuelMonth + DEFAULTS.insGas + DEFAULTS.maintGas;
-
-      return { evFuelMonth, hybridFuelMonth, gasFuelMonth, evTotal, hybridTotal, gasTotal, chargerMonthly };
+      // Return the parts we actually plot
+      return { evFuelMonth, hybridFuelMonth, gasFuelMonth, chargerMonthly };
     }
 
     // ---------- Chart ----------
@@ -272,24 +314,30 @@
     function recalc() {
       const state = $('state').value;
       const miles = $('miles').value;
-      if (!state || !miles) return;
+      // Still allow insurance to refresh even if state/miles not chosen
+      const ins = getInsuranceMonthly();
 
-      const result = monthlyCosts({
-        state,
-        annualMiles: parseInt(miles, 10) || 0,
-        needsCharger: $('needsChargerYes').checked,
-        homeChargePct: parseInt($('homeChargePct').value, 10) || 0
-      });
+      if (state && miles) {
+        const result = monthlyCosts({
+          state,
+          annualMiles: parseInt(miles, 10) || 0,
+          needsCharger: $('needsChargerYes').checked,
+          homeChargePct: parseInt($('homeChargePct').value, 10) || 0
+        });
 
-      chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
-      chart.data.datasets[1].data = [DEFAULTS.insEV, DEFAULTS.insHybrid, DEFAULTS.insGas];
+        chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
+        chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+      }
+
+      // Always update insurance + maintenance bars
+      chart.data.datasets[1].data = [ins.ev, ins.hybrid, ins.gas];
       chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
-      chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+
       chart.update();
     }
 
     // Bind events
-    ['state','miles','homeChargePct'].forEach(id => $(id).addEventListener('change', recalc));
+    ['state','miles','homeChargePct','evModel'].forEach(id => $(id).addEventListener('change', recalc));
     $('homeChargePct').addEventListener('input', recalc);
   </script>
 </body>
