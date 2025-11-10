@@ -34,121 +34,17 @@
     .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
   </style>
-  
-<!-- Start of new chart test-->
-  <!-- Add these CDNs once (near your other <script> tags) -->
-<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-geo@4.3.2/build/index.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/us-atlas@3/us/10m.json"></script>
-
-<!--
-<div style="display:grid;gap:16px;grid-template-columns:1fr 1fr;margin:24px 0">
-  <canvas id="mapElectricity" height="240"></canvas>
-  <canvas id="mapGasoline" height="240"></canvas>
-</div>
--->
-  
-<script>
-(async function(){
-  // Load state shapes
-  const usa = window.us; // from us-atlas
-  const states = ChartGeo.topojson.feature(usa, usa.objects.states).features;
-
-  // Load your CSV
-  const csvUrl = 'state_energy_prices.csv';
-  const parsed = await new Promise((resolve) => {
-    Papa.parse(csvUrl, { download: true, header: true, dynamicTyping: true, complete: r => resolve(r.data) });
-  });
-
-  // Build maps: key by USPS code (e.g., "CA", "TX")
-  const elecByState = {};
-  const gasByState  = {};
-  parsed.forEach(row => {
-    if (!row.state) return;
-    elecByState[row.state] = +row['electricity price']; // cents/kWh
-    gasByState[row.state]  = +row['gasoline price'];    // $/gal
-  });
-
-  // Helper to map FIPS -> state abbrev
-  // Minimal map (FIPS to USPS); chartjs-chart-geo provides helpers on feature properties
-  const fipsToAbbr = Object.fromEntries(states.map(f => [f.id, f.properties?.postal]));
-
-  // Color scales (shared domain for comparability)
-  const elecValues = Object.values(elecByState).filter(Number.isFinite);
-  const gasValues  = Object.values(gasByState).filter(Number.isFinite);
-  const elecMin = Math.min(...elecValues), elecMax = Math.max(...elecValues);
-  const gasMin  = Math.min(...gasValues),  gasMax  = Math.max(...gasValues);
-
-  function colorScale(v, vmin, vmax) {
-    // 0..1
-    const t = (v - vmin) / (vmax - vmin || 1);
-    // simple light->dark purple
-    const i = Math.max(0, Math.min(1, t));
-    const c = Math.round(220 - 140*i); // 220..80
-    return `rgb(${c}, ${c-10}, 255)`;
-  }
-
-  function datasetFor(kind) {
-    const source = kind === 'elec' ? elecByState : gasByState;
-    const [vmin, vmax] = kind === 'elec' ? [elecMin, elecMax] : [gasMin, gasMax];
-
-    return states.map(f => {
-      const abbr = fipsToAbbr[f.id];
-      const value = source[abbr];
-      return {
-        feature: f,
-        value: Number.isFinite(value) ? value : null,
-        backgroundColor: Number.isFinite(value) ? colorScale(value, vmin, vmax) : '#eee',
-        borderColor: '#fff'
-      };
-    });
-  }
-
-  const elecCtx = document.getElementById('mapElectricity').getContext('2d');
-  const gasCtx  = document.getElementById('mapGasoline').getContext('2d');
-
-  new Chart(elecCtx, {
-    type: 'choropleth',
-    data: { labels: states.map(s => s.properties.name), datasets: [{ label:'Electricity (¢/kWh)', data: datasetFor('elec') }] },
-    options: {
-      plugins: { legend: { display: false }, tooltip: {
-        callbacks: { label: (ctx) => `${ctx.raw.feature.properties.name}: ${ctx.raw.value?.toFixed(2)} ¢/kWh` }
-      }},
-      scales: { projection: { axis: 'x', projection: 'albersUsa' } }
-    }
-  });
-
-  new Chart(gasCtx, {
-    type: 'choropleth',
-    data: { labels: states.map(s => s.properties.name), datasets: [{ label:'Gasoline ($/gal)', data: datasetFor('gas') }] },
-    options: {
-      plugins: { legend: { display: false }, tooltip: {
-        callbacks: { label: (ctx) => `${ctx.raw.feature.properties.name}: $${ctx.raw.value?.toFixed(2)}/gal` }
-      }},
-      scales: { projection: { axis: 'x', projection: 'albersUsa' } }
-    }
-  });
-})();
-</script>
-  <!-- End of New chart test-->
-
-  
 </head>
   
   
 <body>
+  
   <div class="wrap">
     <h1>Real Cost of EV Ownership vs. Hybrid & Gasoline</h1>
     <p class="hint">Select your state and driving profile to see cost comparisons.</p>
 
     <div id="csvStatus"></div>
 
-    <!--New Chart Test-->
-  <div style="display:grid;gap:16px;grid-template-columns:1fr 1fr;margin:24px 0">
-  <canvas id="mapElectricity" height="240"></canvas>
-  <canvas id="mapGasoline" height="240"></canvas>
-  </div>
-    <!--New Chart Test End-->
-    
     <div class="panel">
       <div>
         <label for="state">Step 1: Select your state of residence</label>
@@ -177,7 +73,21 @@
     <div class="advanced-content" id="advancedContent">
       <div class="panel">
         <div>
-          <label>Do you need to install a home EV charger?</label>
+          <label for="evModel">Select your EV for insurance comparison</label>
+          <select id="evModel">
+            <option value="">-- Select an EV model --</option>
+            <option value="Model 3">Tesla Model 3 (MSRP $42,490)</option>
+            <option value="Model Y">Tesla Model Y (MSRP $44,990)</option>
+            <option value="Model X">Tesla Model X (MSRP $94,990)</option>
+            <option value="Model S">Not sure - Use Average EV</option>
+          </select>
+          <div class="hint">
+            Insurance will be adjusted by selected EV model.
+          </div>
+        </div>
+   
+        <div>
+          <label>Need to install EV charger?</label>
           <div class="radio-container">
             <div class="radio-option">
               <input type="radio" id="needsChargerYes" name="needsCharger" value="yes" />
@@ -188,33 +98,19 @@
               <label for="needsChargerNo">No</label>
             </div>
           </div>
-          <div class="hint">If yes, we’ll add an estimated $1,500 installation cost (amortized).</div>
+          <div class="hint">If yes, will add an estimated $1,500 cost.</div>
         </div>
 
         <div>
-          <label for="homeChargePct">What percentage of charging will you do at home?</label>
+          <label for="homeChargePct">Percent of your charging is at home</label>
           <input id="homeChargePct" type="range" min="0" max="100" value="80" />
           <div class="hint">
-            <span id="homeChargePctValue">80</span>% at home,
-            <span id="publicChargePctValue">20</span>% at public stations (charged at $0.50/kWh)
+            <span id="homeChargePctValue">80</span>% at home, 
+            <span id="publicChargePctValue">20</span>% at public (charged $0.50/kWh)
           </div>
         </div>
 
-        <!-- NEW: EV model selection -->
-        <div>
-          <label for="evModel">Which EV are you planning to buy?</label>
-          <select id="evModel">
-            <option value="">-- Select an EV model --</option>
-            <option value="Model 3">Tesla Model 3</option>
-            <option value="Model Y">Tesla Model Y</option>
-            <option value="Model S">Tesla Model S</option>
-            <option value="Model X">Tesla Model X</option>
-          </select>
-          <div class="hint">
-            Insurance adjusts by model. Hybrid/Gas comparison uses $2,310/yr for Model 3/Y, and $2,817/yr for Model S/X.
-          </div>
-        </div>
-        <!-- /NEW -->
+        
       </div>
     </div>
 
@@ -246,7 +142,7 @@
     const INSURANCE_BY_MODEL = {
       'Model 3': { evYear: 4298, compYear: 2310 }, // compYear applies to Hybrid & Gas
       'Model Y': { evYear: 4003, compYear: 2310 },
-      'Model S': { evYear: 3718, compYear: 2817 },
+      'Model S': { evYear: 4072, compYear: 2310 },
       'Model X': { evYear: 4270, compYear: 2817 }
     };
 
@@ -450,4 +346,3 @@
   </script>
 </body>
 </html>
-
