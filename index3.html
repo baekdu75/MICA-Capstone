@@ -33,7 +33,7 @@
     .status { padding: 8px 12px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; }
     .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
     .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    .vehicle-image { width: 100%; max-width: 300px; height: 150px; object-fit: contain; border-radius: 8px; background: #f5f5f5; margin-top: 12px; border: 1px solid #dcdceb; }
+    .vehicle-image { width: 100%; max-width: 300px; height: 150px; object-fit: contain; border-radius: 8px; background: #ffffff; margin-top: 12px; border: 1px solid #dcdceb; }
   </style>
 </head>
   
@@ -71,7 +71,7 @@
     <div class="panel">
       <div>
         <label>Step-3. Choose your vehicles</label>
-        <div class="hint">Choose your electric vehicle model.</div>
+        <div class="hint">Choose your electric vehicle.</div>
         <select id="evModel">
           <option value="Model 3">Tesla Model 3</option>
           <option value="Model Y" selected>Tesla Model Y</option>
@@ -83,20 +83,21 @@
 
       <div>
         <label>&nbsp;</label>
-        <div class="hint">Choose your hybrid vehicle model.</div>
+        <div class="hint">Choose your hybrid vehicle.</div>
         <select id="hybridModel">
           <option value="Toyota Prius" selected>Toyota Prius</option>
           <option value="Toyota RAV4">Toyota RAV4 Hybrid</option>
           <option value="Honda Accord Hybrid">Honda Accord Hybrid</option>
-          <option value="Toyota Highlander">Toyota Highlander Hybrid</option>
           <option value="Toyota Camry">Toyota Camry Hybrid</option>
+          <option value="Toyota Highlander">Toyota Highlander Hybrid</option>
+
         </select>
         <img id="hybridImage" class="vehicle-image" src="https://via.placeholder.com/300x150/b9a7ff/ffffff?text=Toyota+Prius" alt="Hybrid" width=550>
       </div>
 
       <div>
         <label>&nbsp;</label>
-        <div class="hint">Choose your gasoline vehicle model.</div>
+        <div class="hint">Choose your gasoline vehicle.</div>
         <select id="gasModel">
           <option value="Honda Civic" selected>Honda Civic</option>
           <option value="Honda CR-V">Honda CR-V</option>
@@ -373,5 +374,6 @@
   </script>
 </body>
 </html>
+
 
 
