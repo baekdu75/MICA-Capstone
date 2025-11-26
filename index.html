@@ -461,83 +461,376 @@
 
         <!-- Section 4 - Calculator -->
         <div class="calculator-section">
-            <div class="section-header" style="margin-bottom: 0;">
-                <div class="section-number">4</div>
-                <h2>See Your True Cost With the Calculator</h2>
+    <div class="panel">
+      <div>
+        <label for="state">Step-1. Select your state of residence</label>
+        <!--<div class="hint">We'll use your state's average residential electricity rate and gas price.</div>-->
+        <select id="state"></select>
+      </div>
+    </div>
+    <br>
+    
+    <div class="panel">
+      <div>
+        <label for="miles">Step-2. Choose your driving profile</label>
+        <!--<div class="hint">Select the profile that best matches your driving habits.</div>-->
+        <select id="miles">
+          <option value="">-- Select your driving profile --</option>
+          <option value="4000">Minimal (5,000 miles/yr) - Walk/transit, short errands, 1-2 days/week</option>
+          <option value="7000">Light (7,000 miles/yr) - Local commute, 2-3 days/week, few trips</option>
+          <option value="10000">Typical (10,000 miles/yr) - Standard usage, 4-5 days/week</option>
+          <option value="13000">Heavy Commute (13,000 miles/yr) - Daily commute, longer drives</option>
+          <option value="18000">High Mileage (18,000 miles/yr) - Field work, frequent trips</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    
+    <div class="panel">
+      <div>
+        <label>Step-3. Choose your vehicles</label>
+        <div class="hint">Choose your electric vehicle.</div>
+        <select id="evModel">
+          <option value="Model 3">Tesla Model 3</option>
+          <option value="Model Y" selected>Tesla Model Y</option>
+          <option value="Model S">Tesla Model S</option>
+          <option value="Model X">Tesla Model X</option>
+        </select>
+        <img id="evImage" class="vehicle-image" src="https://via.placeholder.com/300x150/7c6cf3/ffffff?text=Tesla+Model+Y" alt="EV" width=550>
+      </div>
+
+      <div>
+        <label>&nbsp;</label>
+        <div class="hint">Choose your hybrid vehicle.</div>
+        <select id="hybridModel">
+          <option value="Toyota Prius" selected>Toyota Prius</option>
+          <option value="Toyota RAV4">Toyota RAV4 Hybrid</option>
+          <option value="Honda Accord Hybrid">Honda Accord Hybrid</option>
+          <option value="Toyota Camry">Toyota Camry Hybrid</option>
+          <option value="Toyota Highlander">Toyota Highlander Hybrid</option>
+
+        </select>
+        <img id="hybridImage" class="vehicle-image" src="https://via.placeholder.com/300x150/b9a7ff/ffffff?text=Toyota+Prius" alt="Hybrid" width=550>
+      </div>
+
+      <div>
+        <label>&nbsp;</label>
+        <div class="hint">Choose your gasoline vehicle.</div>
+        <select id="gasModel">
+          <option value="Honda Civic" selected>Honda Civic</option>
+          <option value="Honda CR-V">Honda CR-V</option>
+          <option value="Toyota Camry">Toyota Camry</option>
+          <option value="Toyota RAV4">Toyota RAV4</option>
+          <option value="Chevy Equinox">Chevy Equinox</option>
+        </select>
+        <img id="gasImage" class="vehicle-image" src="https://via.placeholder.com/300x150/e1d8ff/ffffff?text=Honda+Civic" alt="Gas" width=550>
+      </div>
+    </div>
+
+    <div class="advanced-toggle" id="advancedToggle">
+      <span class="advanced-toggle-title">⚙️ Advanced Configuration</span>
+      <span class="advanced-toggle-arrow">▼</span>
+    </div>
+
+    <div class="advanced-content" id="advancedContent">
+      <div class="panel">
+        <div>
+          <label>Do you need to install a home EV charger?</label>
+          <div class="radio-container">
+            <div class="radio-option">
+              <input type="radio" id="needsChargerYes" name="needsCharger" value="yes" />
+              <label for="needsChargerYes">Yes</label>
             </div>
-            <p>Adjust the sliders and inputs to compare estimated monthly costs for an EV, hybrid, and gasoline vehicle based on your situation.</p>
-
-            <div class="calculator-placeholder">
-                <div>
-                    <h3>EV vs Hybrid vs Gas — Monthly Cost Estimate</h3>
-                    <p class="calculator-subtitle">This is a simplified model using your annual miles, energy prices, efficiency, and insurance.</p>
-                </div>
-
-                <div class="calculator-grid">
-                    <div class="calculator-group">
-                        <label for="milesPerYear">Annual miles driven</label>
-                        <input type="number" id="milesPerYear" value="12000" min="0" step="500">
-                        <small>How many miles you drive in a year.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="electricityPrice">Electricity price ($/kWh)</label>
-                        <input type="number" id="electricityPrice" value="0.16" min="0" step="0.01">
-                        <small>Use your local residential or public charging rate.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="gasPrice">Gasoline price ($/gal)</label>
-                        <input type="number" id="gasPrice" value="3.50" min="0" step="0.05">
-                        <small>Average price per gallon where you live.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="evEfficiency">EV efficiency (kWh / 100 miles)</label>
-                        <input type="number" id="evEfficiency" value="28" min="5" step="1">
-                        <small>Lower is better. Many modern EVs are in the 25–30 range.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="hybridMpg">Hybrid fuel economy (mpg)</label>
-                        <input type="number" id="hybridMpg" value="45" min="10" step="1">
-                        <small>Typical hybrid: 40–55 mpg.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="gasMpg">Gas vehicle fuel economy (mpg)</label>
-                        <input type="number" id="gasMpg" value="30" min="5" step="1">
-                        <small>Typical non-hybrid compact: 25–35 mpg.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="evInsurance">EV insurance ($ / month)</label>
-                        <input type="number" id="evInsurance" value="190" min="0" step="5">
-                        <small>Your estimated monthly premium for an EV.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="hybridInsurance">Hybrid insurance ($ / month)</label>
-                        <input type="number" id="hybridInsurance" value="160" min="0" step="5">
-                        <small>Monthly premium for a comparable hybrid.</small>
-                    </div>
-
-                    <div class="calculator-group">
-                        <label for="gasInsurance">Gas vehicle insurance ($ / month)</label>
-                        <input type="number" id="gasInsurance" value="150" min="0" step="5">
-                        <small>Monthly premium for a comparable gas vehicle.</small>
-                    </div>
-                </div>
-
-                <div class="calculator-actions">
-                    <button id="calculateBtn" type="button">
-                        <span>Calculate monthly cost</span>
-                    </button>
-                    <span class="calculator-note">Energy + insurance only. Taxes, purchase price, and maintenance are not included yet.</span>
-                </div>
-
-                <div id="results" class="results-grid" aria-live="polite"></div>
+            <div class="radio-option">
+              <input type="radio" id="needsChargerNo" name="needsCharger" value="no" checked />
+              <label for="needsChargerNo">No</label>
             </div>
+          </div>
+          <div class="hint">If yes, will add an estimated $1,500 cost.</div>
+        </div>
+
+        <div>
+          <label for="homeChargePct">Percent of your charging is at home</label>
+          <input id="homeChargePct" type="range" min="0" max="100" value="80" />
+          <div class="hint">
+            <span id="homeChargePctValue">80</span>% at home, 
+            <span id="publicChargePctValue">20</span>% at public (charged $0.50/kWh)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin:18px 0;"></div>
+    <canvas id="chart" height="140"></canvas>
+  </div>
+
+  <script>
+    // ---------- Constants & defaults ----------
+    const CHARGER_COST = 1500;
+    let electricityCentsPerKwhByState = {};
+    let gasolinePerGallonByState = {};
+
+    const DEFAULTS = {
+      evKwhPer100: 28,
+      hybridMpg: 50,
+      mpg: 30,
+      insTesla3: 358,
+        insTeslaY: 333.6,
+        insTeslaS: 309.8,
+        insTeslaX: 355.8,
+        insPrius: 182.7,
+        insRAV4H: 171.5,
+        insAccordH: 199.2,
+        insCamryH: 226.2,
+        insHighlanderH: 176.9,
+        insCivic: 207.7,
+        insCRV: 160.1,
+        insCamry: 226.2,
+        insRAV4: 171.5,
+        insEquinox: 173.3,
+      insHybrid: 130,
+      insGas: 120,
+      maintEV: 25,
+      maintHybrid: 45,
+      maintGas: 60,
+      chargerLifeMonths: 120
+    };
+
+    // Vehicle image URLs (using placeholder - replace with real images)
+    const VEHICLE_IMAGES = {
+      'Model 3': 'Model-3.png',
+      'Model Y': 'Model-Y.png',
+      'Model S': 'Model-S.png',
+      'Model X': 'Model-X.png',
+      'Toyota Prius': 'Toyota_Prius.png',
+      'Toyota RAV4 Hybrid': 'RAV4-Hybrid.png',
+      'Honda Accord Hybrid': 'Accord-Hybrid.png',
+      'Toyota Highlander': 'Highlander-Hybrid.png',
+      'Toyota Camry': 'Camry-Hybrid.png',
+      'Honda Civic': 'Honda_Civic.png',
+      'Honda CR-V': 'CR-V.png',
+      'Toyota RAV4': 'RAV-4-Hybrid.png',
+      'Chevy Equinox': 'Equinox.png'
+    };
+
+    const $ = id => document.getElementById(id);
+    const csvStatus = $('csvStatus');
+    const stateSel = $('state');
+
+    // ---------- Build state dropdown ----------
+    function populateStateDropdown() {
+      stateSel.innerHTML = '';
+      const emptyOption = document.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = '-- Select a state --';
+      stateSel.appendChild(emptyOption);
+
+      Object.keys(electricityCentsPerKwhByState).sort().forEach(s => {
+        const o = document.createElement('option');
+        o.value = o.textContent = s;
+        stateSel.appendChild(o);
+      });
+      stateSel.value = '';
+    }
+
+    // ---------- Update vehicle images ----------
+    function updateVehicleImages() {
+      const evModel = $('evModel').value;
+      const hybridModel = $('hybridModel').value;
+      const gasModel = $('gasModel').value;
+
+      $('evImage').src = VEHICLE_IMAGES[evModel] || VEHICLE_IMAGES['Model Y'];
+      $('hybridImage').src = VEHICLE_IMAGES[hybridModel] || VEHICLE_IMAGES['Toyota Prius'];
+      $('gasImage').src = VEHICLE_IMAGES[gasModel] || VEHICLE_IMAGES['Honda Civic'];
+    }
+
+    // ---------- CSV load ----------
+    window.addEventListener('DOMContentLoaded', function () {
+      const csvFileName = 'state_energy_prices.csv';
+      csvStatus.innerHTML = '<div class="status">Loading state data...</div>';
+
+      Papa.parse(csvFileName, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          const newElectricity = {};
+          const newGasoline = {};
+          let successCount = 0;
+
+          results.data.forEach((row, i) => {
+            const state = row.state ? String(row.state).trim() : '';
+            if (!state) return;
+
+            const elecPrice = parseFloat(row['electricity price']);
+            const gasPrice  = parseFloat(row['gasoline price']);
+
+            if (Number.isFinite(elecPrice) && elecPrice > 0 &&
+                Number.isFinite(gasPrice)  && gasPrice  > 0) {
+              newElectricity[state] = elecPrice;
+              newGasoline[state] = gasPrice;
+              successCount++;
+            }
+          });
+
+          if (successCount > 0) {
+            electricityCentsPerKwhByState = newElectricity;
+            gasolinePerGallonByState = newGasoline;
+            populateStateDropdown();
+            csvStatus.innerHTML = `<div class="status success">✓ Loaded data for ${successCount} states</div>`;
+            setTimeout(() => { csvStatus.innerHTML = ''; }, 2500);
+          } else {
+            csvStatus.innerHTML = '<div class="status error">✗ No valid data found in CSV.</div>';
+          }
+        },
+        error: function (error) {
+          csvStatus.innerHTML = `<div class="status error">✗ CSV file not found: ${error.message}</div>`;
+          console.error('CSV load error:', error);
+        }
+      });
+
+      // Initialize vehicle images
+      updateVehicleImages();
+    });
+
+    // ---------- Advanced toggle ----------
+    const advToggle = $('advancedToggle');
+    const advContent = $('advancedContent');
+    const advArrow = advToggle.querySelector('.advanced-toggle-arrow');
+    advToggle.addEventListener('click', () => {
+      advContent.classList.toggle('open');
+      advArrow.classList.toggle('open');
+    });
+
+    // ---------- Radio bindings ----------
+    const needsChargerYes = $('needsChargerYes');
+    const needsChargerNo  = $('needsChargerNo');
+    needsChargerYes.addEventListener('change', recalc);
+    needsChargerNo.addEventListener('change', recalc);
+
+    // ---------- Slider bindings ----------
+    const homeSlider = $('homeChargePct');
+    const homeVal = $('homeChargePctValue');
+    const publicVal = $('publicChargePctValue');
+    homeSlider.addEventListener('input', () => {
+      const v = parseInt(homeSlider.value, 10) || 0;
+      homeVal.textContent = v;
+      publicVal.textContent = 100 - v;
+      recalc();
+    });
+
+    // ---------- Math ----------
+    function monthlyCosts({ state, annualMiles, needsCharger, homeChargePct }) {
+      const homeKwhPrice = (electricityCentsPerKwhByState[state] ?? 15) / 100;
+      const gasPrice = gasolinePerGallonByState[state] ?? 3.5;
+      const publicChargeRate = 0.50;
+
+      const ev_kwh_year = (DEFAULTS.evKwhPer100 / 100) * annualMiles;
+      const homeFrac   = homeChargePct / 100;
+      const publicFrac = 1 - homeFrac;
+
+      const homeChargeYear   = ev_kwh_year * homeFrac  * homeKwhPrice;
+      const publicChargeYear = ev_kwh_year * publicFrac * publicChargeRate;
+      const evFuelYear       = homeChargeYear + publicChargeYear;
+
+      const hybridFuelYear = (annualMiles / DEFAULTS.hybridMpg) * gasPrice;
+      const gasFuelYear    = (annualMiles / DEFAULTS.mpg) * gasPrice;
+
+      const evFuelMonth     = evFuelYear / 12;
+      const hybridFuelMonth = hybridFuelYear / 12;
+      const gasFuelMonth    = gasFuelYear / 12;
+
+      const chargerMonthly = needsCharger ? (CHARGER_COST / DEFAULTS.chargerLifeMonths) : 0;
+
+      return { evFuelMonth, hybridFuelMonth, gasFuelMonth, chargerMonthly };
+    }
+
+    // ---------- Chart ----------
+    const ctx = document.getElementById('chart');
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['EV','Hybrid','Gasoline'],
+        datasets: [
+          { label:'Fuel/Charge', data:[0,0,0], backgroundColor:'#7c6cf3' },
+          { label:'Insurance',   data:[0,0,0], backgroundColor:'#b9a7ff' },
+          { label:'Maintenance', data:[0,0,0], backgroundColor:'#e1d8ff' },
+          { label:'Charger (amortized)', data:[0,0,0], backgroundColor:'#ffa07a' }
+        ]
+      },
+      options: {
+        responsive:true,
+        scales: {
+          x: { stacked:true },
+          y: { stacked:true, beginAtZero:true, title:{ display:true, text:'$/month'} }
+        },
+        plugins: {
+          legend: { position:'bottom' },
+          tooltip: { mode:'index', intersect:false }
+        }
+      }
+    });
+      
+   // ---------- Get insurance for selected vehicles ----------
+    function getInsuranceByModel() {
+      const evModel = $('evModel').value;
+      const hybridModel = $('hybridModel').value;
+      const gasModel = $('gasModel').value;
+
+      const insuranceMap = {
+        'Model 3': DEFAULTS.insTesla3,
+        'Model Y': DEFAULTS.insTeslaY,
+        'Model S': DEFAULTS.insTeslaS,
+        'Model X': DEFAULTS.insTeslaX,
+        'Toyota Prius': DEFAULTS.insPrius,
+        'Toyota RAV4': DEFAULTS.insRAV4H,
+        'Honda Accord Hybrid': DEFAULTS.insAccordH,
+        'Toyota Camry': DEFAULTS.insCamryH,
+        'Toyota Highlander': DEFAULTS.insHighlanderH,
+        'Honda Civic': DEFAULTS.insCivic,
+        'Honda CR-V': DEFAULTS.insCRV,
+        'Chevy Equinox': DEFAULTS.insEquinox
+      };
+
+      return {
+        evIns: insuranceMap[evModel] || DEFAULTS.insEV,
+        hybridIns: insuranceMap[hybridModel] || DEFAULTS.insHybrid,
+        gasIns: insuranceMap[gasModel] || DEFAULTS.insGas
+      };
+    }
+// ---------- Recalc ----------
+    function recalc() {
+      const state = $('state').value;
+      const miles = $('miles').value;
+
+      if (state && miles) {
+        const result = monthlyCosts({
+          state,
+          annualMiles: parseInt(miles, 10) || 0,
+          needsCharger: $('needsChargerYes').checked,
+          homeChargePct: parseInt($('homeChargePct').value, 10) || 0
+        });
+
+        chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
+        chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+      }
+
+      const insurance = getInsuranceByModel();
+      chart.data.datasets[1].data = [insurance.evIns, insurance.hybridIns, insurance.gasIns];
+      chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
+
+      chart.update();
+    }
+
+    // Bind events
+    ['state','miles','homeChargePct','evModel','hybridModel','gasModel'].forEach(id => {
+      $(id).addEventListener('change', () => {
+        updateVehicleImages();
+        recalc();
+      });
+    });
+    $('homeChargePct').addEventListener('input', recalc);
+  </script>
         </div>
 
         <!-- Bottom line -->
