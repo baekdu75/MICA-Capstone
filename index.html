@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Real Cost of EVs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="none"/><path d="M50 10v80M10 50h80" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            margin: 80px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.4s; }
+        .section:nth-child(4) { animation-delay: 0.6s; }
+        .section:nth-child(5) { animation-delay: 0.8s; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .section-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section h2 {
+            font-size: 2em;
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .section p {
+            font-size: 1.15em;
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .chart-placeholder {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            margin: 30px 0;
+            border: 2px dashed #e2e8f0;
+            text-align: center;
+            color: #718096;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .chart-placeholder:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .chart-placeholder svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .highlight-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            border-radius: 20px;
+            margin: 80px 0;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        .calculator-section h2 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .calculator-section > p {
+            text-align: center;
+            font-size: 1.2em;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.95;
+        }
+
+        .calculator-placeholder {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            color: #333;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .calculator-placeholder svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card h4 {
+            color: #667eea;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.95em;
+            color: #718096;
+            margin: 0;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+
+        footer p {
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .section h2 {
+                font-size: 1.5em;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .calculator-section h2 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Real Cost of EV Ownership</h1>
+        <p>Beyond the marketing hype lies a more nuanced reality. Let's explore what it actually costs to own an electric vehicle in America.</p>
+    </div>
+
+    <div class="container">
+        <!-- Section 1 -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2>The Myth of "EVs Are Always Cheaper"</h2>
+            </div>
+            <p>Electric vehicles are often marketed as universally cheaper to operate than gas-powered cars. The pitch is simple and appealing: electricity costs less than gasoline, so you'll save money every time you drive.</p>
+            <p>But this narrative glosses over a critical truth: <strong>the real cost depends heavily on where you live</strong>. A single national average doesn't capture the dramatic differences in electricity and gasoline prices across the United States. What's cheap in one state might be expensive in another.</p>
+            
+
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2>Energy Costs Vary Wildly by State</h2>
+            </div>
+            <p>When you look at the data, one pattern becomes immediately clear: <strong>electricity and gas prices change dramatically across state lines</strong>. Some states offer incredibly cheap electricity, making EV charging a bargain. Others have high electricity rates that diminish the cost advantage significantly.</p>
+            <p>The same volatility applies to gasoline. While everyone experiences price fluctuations at the pump, the baseline price per gallon varies considerably by region due to state taxes, local regulations, and distribution costs.</p>
+
+            <div class="chart-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3h18v18H3z"/>
+                    <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
+                </svg>
+                <h3>📊 Your Electricity Cost Map Goes Here</h3>
+                <p><img src="Average Electricity Price.png"></p>
+            </div>
+
+            <div class="chart-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3h18v18H3z"/>
+                    <path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>
+                </svg>
+                <h3>⛽ Your Gasoline Cost Map Goes Here</h3>
+                <p><img src="Average Gas Price.png"></p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Cheapest Electricity</h4>
+                    <div class="stat-value">~9¢</div>
+                    <p>per kWh in select states</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Most Expensive</h4>
+                    <div class="stat-value">~30¢</div>
+                    <p>per kWh in some regions</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Cost Difference</h4>
+                    <div class="stat-value">3x</div>
+                    <p>between cheapest and priciest states</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <h2>Insurance Complicates the Story</h2>
+            </div>
+            <p>Even when energy costs favor EVs, there's another expense that often gets overlooked in basic comparisons: <strong>insurance premiums</strong>.</p>
+            <p>EV insurance tends to run higher than comparable gas or hybrid vehicles. The reasons are straightforward: specialized parts, expensive battery repairs, and newer technology mean higher replacement and repair costs. Insurance companies price policies accordingly.</p>
+
+            <div class="highlight-box">
+                <h3>🚗 The Insurance Reality</h3>
+                <p>An EV might save you $50/month on fuel but cost you an extra $30-60/month in insurance. This isn't talked about enough in mainstream EV discussions, but it significantly impacts the total cost of ownership.</p>
+            </div>
+
+        </div>
+
+        <!-- Section 4 -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">4</div>
+                <h2>Your Lifestyle Matters More Than Averages</h2>
+            </div>
+            <p>National averages might say one thing, but <strong>your individual circumstances determine your actual costs</strong>. Here's what really matters:</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Miles Driven</h4>
+                    <div class="stat-value">📍</div>
+                    <p>High mileage amplifies any cost difference between EVs and gas vehicles</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Charging Location</h4>
+                    <div class="stat-value">🏠</div>
+                    <p>Home charging vs. public fast charging can double or triple your electricity costs</p>
+                </div>
+                <div class="stat-card">
+                    <h4>State Energy Prices</h4>
+                    <div class="stat-value">💰</div>
+                    <p>Your local rates determine whether you save or spend more</p>
+                </div>
+            </div>
+
+            <p>Two people driving the same EV model can end up with completely different monthly expenses. Someone in Washington state charging at home might spend $40/month on electricity. The same driver in Hawaii could easily spend $120/month for the same miles.</p>
+
+            <div class="highlight-box">
+                <h3>🎯 It's Personal</h3>
+                <p>There is no universal answer to "Is an EV cheaper?" The only meaningful answer is specific to you: your state, your driving habits, and your charging options.</p>
+            </div>
+        </div>
+
+        <!-- Section 5 - Calculator -->
+        <div class="calculator-section">
+            <div class="section-header" style="margin-bottom: 0;">
+                <div class="section-number">5</div>
+                <h2>See Your True Cost With the Calculator</h2>
+            </div>
+            <p>Stop relying on national averages and marketing claims. Use this calculator to compare what an EV, hybrid, and traditional gas vehicle would actually cost you based on your state and driving habits.</p>
+
+            <div class="calculator-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18M9 3v18"/>
+                    <circle cx="15" cy="15" r="2" fill="currentColor"/>
+                </svg>
+                <h3>EV Cost Calculator</h3>
+                <p style="color: #718096; margin-top: 10px;">Insert your interactive cost comparison calculator</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 style="text-align: center; color: #2d3748; margin-bottom: 30px;">The Bottom Line</h2>
+            <p style="text-align: center; font-size: 1.2em; max-width: 800px; margin: 0 auto;">EVs can be a great financial choice for some drivers and a poor one for others. The difference isn't the technology—it's your specific situation. Now you have the data to make an informed decision for yourself.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Data-driven insights into EV ownership costs | Updated 2025</p>
+    </footer>
+</body>
+</html>
+
