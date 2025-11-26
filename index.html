@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Real Cost of EVs</title>
+      <!-- Chart.js + Papa Parse (CDNs) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -847,116 +850,272 @@
         <p>Data-driven insights about "The Real Cost of EVs" | MICA DAV Capstone Project 2025</p>
     </footer>
 
-    <script>
-        function formatMoney(value) {
-            if (!isFinite(value)) return "$–";
-            return "$" + value.toFixed(0);
-        }
+  <script>
+    // ---------- Constants & defaults ----------
+    const CHARGER_COST = 1500;
+    let electricityCentsPerKwhByState = {};
+    let gasolinePerGallonByState = {};
 
-        function calculateMonthlyCosts() {
-            const milesPerYear = parseFloat(document.getElementById("milesPerYear").value) || 0;
-            const electricityPrice = parseFloat(document.getElementById("electricityPrice").value) || 0;
-            const gasPrice = parseFloat(document.getElementById("gasPrice").value) || 0;
-            const evEfficiency = parseFloat(document.getElementById("evEfficiency").value) || 0; // kWh / 100 mi
-            const hybridMpg = parseFloat(document.getElementById("hybridMpg").value) || 0;
-            const gasMpg = parseFloat(document.getElementById("gasMpg").value) || 0;
-            const evInsurance = parseFloat(document.getElementById("evInsurance").value) || 0;
-            const hybridInsurance = parseFloat(document.getElementById("hybridInsurance").value) || 0;
-            const gasInsurance = parseFloat(document.getElementById("gasInsurance").value) || 0;
+    const DEFAULTS = {
+      evKwhPer100: 28,
+      hybridMpg: 50,
+      mpg: 30,
+      insTesla3: 358,
+        insTeslaY: 333.6,
+        insTeslaS: 309.8,
+        insTeslaX: 355.8,
+        insPrius: 182.7,
+        insRAV4H: 171.5,
+        insAccordH: 199.2,
+        insCamryH: 226.2,
+        insHighlanderH: 176.9,
+        insCivic: 207.7,
+        insCRV: 160.1,
+        insCamry: 226.2,
+        insRAV4: 171.5,
+        insEquinox: 173.3,
+      insHybrid: 130,
+      insGas: 120,
+      maintEV: 25,
+      maintHybrid: 45,
+      maintGas: 60,
+      chargerLifeMonths: 120
+    };
 
-            const months = 12;
+    // Vehicle image URLs (using placeholder - replace with real images)
+    const VEHICLE_IMAGES = {
+      'Model 3': 'Model-3.png',
+      'Model Y': 'Model-Y.png',
+      'Model S': 'Model-S.png',
+      'Model X': 'Model-X.png',
+      'Toyota Prius': 'Toyota_Prius.png',
+      'Toyota RAV4 Hybrid': 'RAV4-Hybrid.png',
+      'Honda Accord Hybrid': 'Accord-Hybrid.png',
+      'Toyota Highlander': 'Highlander-Hybrid.png',
+      'Toyota Camry': 'Camry-Hybrid.png',
+      'Honda Civic': 'Honda_Civic.png',
+      'Honda CR-V': 'CR-V.png',
+      'Toyota RAV4': 'RAV-4-Hybrid.png',
+      'Chevy Equinox': 'Equinox.png'
+    };
 
-            // EV energy cost
-            const evKwhPerYear = (milesPerYear * evEfficiency) / 100;
-            const evEnergyCostPerYear = evKwhPerYear * electricityPrice;
-            const evEnergyPerMonth = evEnergyCostPerYear / months;
-            const evMonthlyTotal = evEnergyPerMonth + evInsurance;
+    const $ = id => document.getElementById(id);
+    const csvStatus = $('csvStatus');
+    const stateSel = $('state');
 
-            // Hybrid fuel cost
-            const hybridGallonsPerYear = hybridMpg > 0 ? milesPerYear / hybridMpg : Infinity;
-            const hybridFuelCostPerYear = hybridGallonsPerYear * gasPrice;
-            const hybridFuelPerMonth = hybridFuelCostPerYear / months;
-            const hybridMonthlyTotal = hybridFuelPerMonth + hybridInsurance;
+    // ---------- Build state dropdown ----------
+    function populateStateDropdown() {
+      stateSel.innerHTML = '';
+      const emptyOption = document.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = '-- Select a state --';
+      stateSel.appendChild(emptyOption);
 
-            // Gas fuel cost
-            const gasGallonsPerYear = gasMpg > 0 ? milesPerYear / gasMpg : Infinity;
-            const gasFuelCostPerYear = gasGallonsPerYear * gasPrice;
-            const gasFuelPerMonth = gasFuelCostPerYear / months;
-            const gasMonthlyTotal = gasFuelPerMonth + gasInsurance;
+      Object.keys(electricityCentsPerKwhByState).sort().forEach(s => {
+        const o = document.createElement('option');
+        o.value = o.textContent = s;
+        stateSel.appendChild(o);
+      });
+      stateSel.value = '';
+    }
 
-            const options = [
-                {
-                    key: "ev",
-                    label: "Electric Vehicle (EV)",
-                    monthlyTotal: evMonthlyTotal,
-                    energyPerMonth: evEnergyPerMonth,
-                    insurancePerMonth: evInsurance
-                },
-                {
-                    key: "hybrid",
-                    label: "Hybrid Vehicle",
-                    monthlyTotal: hybridMonthlyTotal,
-                    energyPerMonth: hybridFuelPerMonth,
-                    insurancePerMonth: hybridInsurance
-                },
-                {
-                    key: "gas",
-                    label: "Gasoline Vehicle",
-                    monthlyTotal: gasMonthlyTotal,
-                    energyPerMonth: gasFuelPerMonth,
-                    insurancePerMonth: gasInsurance
-                }
-            ];
+    // ---------- Update vehicle images ----------
+    function updateVehicleImages() {
+      const evModel = $('evModel').value;
+      const hybridModel = $('hybridModel').value;
+      const gasModel = $('gasModel').value;
 
-            const validOptions = options.filter(o => isFinite(o.monthlyTotal));
-            let bestKey = null;
-            if (validOptions.length > 0) {
-                bestKey = validOptions.reduce((min, o) =>
-                    o.monthlyTotal < min.monthlyTotal ? o : min
-                ).key;
+      $('evImage').src = VEHICLE_IMAGES[evModel] || VEHICLE_IMAGES['Model Y'];
+      $('hybridImage').src = VEHICLE_IMAGES[hybridModel] || VEHICLE_IMAGES['Toyota Prius'];
+      $('gasImage').src = VEHICLE_IMAGES[gasModel] || VEHICLE_IMAGES['Honda Civic'];
+    }
+
+    // ---------- CSV load ----------
+    window.addEventListener('DOMContentLoaded', function () {
+      const csvFileName = 'state_energy_prices.csv';
+      csvStatus.innerHTML = '<div class="status">Loading state data...</div>';
+
+      Papa.parse(csvFileName, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          const newElectricity = {};
+          const newGasoline = {};
+          let successCount = 0;
+
+          results.data.forEach((row, i) => {
+            const state = row.state ? String(row.state).trim() : '';
+            if (!state) return;
+
+            const elecPrice = parseFloat(row['electricity price']);
+            const gasPrice  = parseFloat(row['gasoline price']);
+
+            if (Number.isFinite(elecPrice) && elecPrice > 0 &&
+                Number.isFinite(gasPrice)  && gasPrice  > 0) {
+              newElectricity[state] = elecPrice;
+              newGasoline[state] = gasPrice;
+              successCount++;
             }
+          });
 
-            const resultsContainer = document.getElementById("results");
-            resultsContainer.innerHTML = "";
-
-            options.forEach(option => {
-                const card = document.createElement("div");
-                card.className = "result-card" + (option.key === bestKey ? " best" : "");
-
-                const title = document.createElement("h4");
-                title.textContent = option.label;
-
-                const value = document.createElement("div");
-                value.className = "result-value";
-                value.textContent = formatMoney(option.monthlyTotal) + "/mo";
-
-                const lineEnergy = document.createElement("div");
-                lineEnergy.className = "result-line";
-                lineEnergy.innerHTML = "<strong>Energy:</strong> " + formatMoney(option.energyPerMonth) + "/mo";
-
-                const lineInsurance = document.createElement("div");
-                lineInsurance.className = "result-line";
-                lineInsurance.innerHTML = "<strong>Insurance:</strong> " + formatMoney(option.insurancePerMonth) + "/mo";
-
-                card.appendChild(title);
-                if (option.key === bestKey) {
-                    const badge = document.createElement("div");
-                    badge.className = "badge";
-                    badge.textContent = "Lowest monthly cost";
-                    card.appendChild(badge);
-                }
-                card.appendChild(value);
-                card.appendChild(lineEnergy);
-                card.appendChild(lineInsurance);
-
-                resultsContainer.appendChild(card);
-            });
+          if (successCount > 0) {
+            electricityCentsPerKwhByState = newElectricity;
+            gasolinePerGallonByState = newGasoline;
+            populateStateDropdown();
+            csvStatus.innerHTML = `<div class="status success">✓ Loaded data for ${successCount} states</div>`;
+            setTimeout(() => { csvStatus.innerHTML = ''; }, 2500);
+          } else {
+            csvStatus.innerHTML = '<div class="status error">✗ No valid data found in CSV.</div>';
+          }
+        },
+        error: function (error) {
+          csvStatus.innerHTML = `<div class="status error">✗ CSV file not found: ${error.message}</div>`;
+          console.error('CSV load error:', error);
         }
+      });
 
-        document.getElementById("calculateBtn").addEventListener("click", calculateMonthlyCosts);
+      // Initialize vehicle images
+      updateVehicleImages();
+    });
 
-        // Initial calculation on load so it's not empty
-        calculateMonthlyCosts();
-    </script>
+    // ---------- Advanced toggle ----------
+    const advToggle = $('advancedToggle');
+    const advContent = $('advancedContent');
+    const advArrow = advToggle.querySelector('.advanced-toggle-arrow');
+    advToggle.addEventListener('click', () => {
+      advContent.classList.toggle('open');
+      advArrow.classList.toggle('open');
+    });
+
+    // ---------- Radio bindings ----------
+    const needsChargerYes = $('needsChargerYes');
+    const needsChargerNo  = $('needsChargerNo');
+    needsChargerYes.addEventListener('change', recalc);
+    needsChargerNo.addEventListener('change', recalc);
+
+    // ---------- Slider bindings ----------
+    const homeSlider = $('homeChargePct');
+    const homeVal = $('homeChargePctValue');
+    const publicVal = $('publicChargePctValue');
+    homeSlider.addEventListener('input', () => {
+      const v = parseInt(homeSlider.value, 10) || 0;
+      homeVal.textContent = v;
+      publicVal.textContent = 100 - v;
+      recalc();
+    });
+
+    // ---------- Math ----------
+    function monthlyCosts({ state, annualMiles, needsCharger, homeChargePct }) {
+      const homeKwhPrice = (electricityCentsPerKwhByState[state] ?? 15) / 100;
+      const gasPrice = gasolinePerGallonByState[state] ?? 3.5;
+      const publicChargeRate = 0.50;
+
+      const ev_kwh_year = (DEFAULTS.evKwhPer100 / 100) * annualMiles;
+      const homeFrac   = homeChargePct / 100;
+      const publicFrac = 1 - homeFrac;
+
+      const homeChargeYear   = ev_kwh_year * homeFrac  * homeKwhPrice;
+      const publicChargeYear = ev_kwh_year * publicFrac * publicChargeRate;
+      const evFuelYear       = homeChargeYear + publicChargeYear;
+
+      const hybridFuelYear = (annualMiles / DEFAULTS.hybridMpg) * gasPrice;
+      const gasFuelYear    = (annualMiles / DEFAULTS.mpg) * gasPrice;
+
+      const evFuelMonth     = evFuelYear / 12;
+      const hybridFuelMonth = hybridFuelYear / 12;
+      const gasFuelMonth    = gasFuelYear / 12;
+
+      const chargerMonthly = needsCharger ? (CHARGER_COST / DEFAULTS.chargerLifeMonths) : 0;
+
+      return { evFuelMonth, hybridFuelMonth, gasFuelMonth, chargerMonthly };
+    }
+
+    // ---------- Chart ----------
+    const ctx = document.getElementById('chart');
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['EV','Hybrid','Gasoline'],
+        datasets: [
+          { label:'Fuel/Charge', data:[0,0,0], backgroundColor:'#7c6cf3' },
+          { label:'Insurance',   data:[0,0,0], backgroundColor:'#b9a7ff' },
+          { label:'Maintenance', data:[0,0,0], backgroundColor:'#e1d8ff' },
+          { label:'Charger (amortized)', data:[0,0,0], backgroundColor:'#ffa07a' }
+        ]
+      },
+      options: {
+        responsive:true,
+        scales: {
+          x: { stacked:true },
+          y: { stacked:true, beginAtZero:true, title:{ display:true, text:'$/month'} }
+        },
+        plugins: {
+          legend: { position:'bottom' },
+          tooltip: { mode:'index', intersect:false }
+        }
+      }
+    });
+      
+   // ---------- Get insurance for selected vehicles ----------
+    function getInsuranceByModel() {
+      const evModel = $('evModel').value;
+      const hybridModel = $('hybridModel').value;
+      const gasModel = $('gasModel').value;
+
+      const insuranceMap = {
+        'Model 3': DEFAULTS.insTesla3,
+        'Model Y': DEFAULTS.insTeslaY,
+        'Model S': DEFAULTS.insTeslaS,
+        'Model X': DEFAULTS.insTeslaX,
+        'Toyota Prius': DEFAULTS.insPrius,
+        'Toyota RAV4': DEFAULTS.insRAV4H,
+        'Honda Accord Hybrid': DEFAULTS.insAccordH,
+        'Toyota Camry': DEFAULTS.insCamryH,
+        'Toyota Highlander': DEFAULTS.insHighlanderH,
+        'Honda Civic': DEFAULTS.insCivic,
+        'Honda CR-V': DEFAULTS.insCRV,
+        'Chevy Equinox': DEFAULTS.insEquinox
+      };
+
+      return {
+        evIns: insuranceMap[evModel] || DEFAULTS.insEV,
+        hybridIns: insuranceMap[hybridModel] || DEFAULTS.insHybrid,
+        gasIns: insuranceMap[gasModel] || DEFAULTS.insGas
+      };
+    }
+// ---------- Recalc ----------
+    function recalc() {
+      const state = $('state').value;
+      const miles = $('miles').value;
+
+      if (state && miles) {
+        const result = monthlyCosts({
+          state,
+          annualMiles: parseInt(miles, 10) || 0,
+          needsCharger: $('needsChargerYes').checked,
+          homeChargePct: parseInt($('homeChargePct').value, 10) || 0
+        });
+
+        chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
+        chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+      }
+
+      const insurance = getInsuranceByModel();
+      chart.data.datasets[1].data = [insurance.evIns, insurance.hybridIns, insurance.gasIns];
+      chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
+
+      chart.update();
+    }
+
+    // Bind events
+    ['state','miles','homeChargePct','evModel','hybridModel','gasModel'].forEach(id => {
+      $(id).addEventListener('change', () => {
+        updateVehicleImages();
+        recalc();
+      });
+    });
+    $('homeChargePct').addEventListener('input', recalc);
+  </script>
 </body>
 </html>
