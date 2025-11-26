@@ -19,4 +19,241 @@
         }
 
         .hero {
-            background: linear-gradient(135deg, #6
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* FIXED SVG (encoded) */
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h100v100H0z' fill='none'/%3E%3Cpath d='M50 10v80M10 50h80' stroke='rgba(255,255,255,0.1)' stroke-width='0.5'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            margin: 80px 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.4s; }
+        .section:nth-child(4) { animation-delay: 0.6s; }
+        .section:nth-child(5) { animation-delay: 0.8s; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .section-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section h2 {
+            font-size: 2em;
+            color: #2d3748;
+            flex: 1;
+        }
+
+        .section p {
+            font-size: 1.15em;
+            color: #4a5568;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .chart-placeholder {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            margin: 30px 0;
+            border: 2px dashed #e2e8f0;
+            text-align: center;
+            color: #718096;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .chart-placeholder:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .calculator-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            border-radius: 20px;
+            margin: 80px 0;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        .calculator-section h2 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .calculator-placeholder {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            color: #333;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 80px;
+        }
+
+        footer p {
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2em; }
+            .hero p { font-size: 1.1em; }
+            .section h2 { font-size: 1.5em; }
+            .section-header { flex-direction: column; align-items: flex-start; }
+            .calculator-section h2 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Real Cost of EV Ownership</h1>
+        <p>Explore the true cost of owning an electric vehicle in America, side-by-side with gasoline and hybrid options.</p>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">1</div>
+                <h2>The Myth of "EVs Are Always Cheaper"</h2>
+            </div>
+            <p>Electric vehicles are often marketed as universally cheaper to operate than gas-powered cars. The pitch is simple and appealing: electricity costs less than gasoline, so you'll save money every time you drive.</p>
+            <p>But this narrative glosses over a critical truth: <strong>the real cost depends heavily on where you live</strong>. A single national average doesn't capture the dramatic differences in electricity and gasoline prices across the United States. What's cheap in one state might be expensive in another.</p>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">2</div>
+                <h2>Energy Costs Vary Wildly by State</h2>
+            </div>
+            <p>When you look at the data, one pattern becomes immediately clear: <strong>electricity and gas prices change dramatically across state lines</strong>.</p>
+
+            <div class="chart-placeholder">
+                <img src="Average%20Electricity%20Price.png" width="500">
+                <img src="Average%20Gas%20Price.png" width="500">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-number">3</div>
+                <h2>Insurance Complicates the Story</h2>
+            </div>
+            <p>Even when energy costs favor EVs, another cost enters the picture: <strong>insurance premiums</strong>.</p>
+
+            <div class="chart-placeholder">
+                <img src="InsuranceChart.png" width="800">
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <div class="section-header" style="margin-bottom: 0;">
+                <div class="section-number">4</div>
+                <h2>See Your True Cost With the Calculator</h2>
+            </div>
+            <p>Use this calculator to compare what an EV, hybrid, and traditional gas vehicle would actually cost you based on your state and driving habits.</p>
+
+            <div class="calculator-placeholder">
+                <h3>EV Cost Calculator</h3>
+                <p style="color:#718096; margin-top:10px;">Interactive tool coming soon</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 style="text-align: center; color: #2d3748; margin-bottom: 30px;">The Bottom Line</h2>
+            <p style="text-align: center; font-size: 1.2em; max-width: 800px; margin: 0 auto;">EVs can be a great financial choice for some drivers — but it depends on where you live and how you drive. Now you have the data to decide for yourself.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Data-driven insights about "The Real Cost of EVs" — MICA DAV Capstone Project 2025</p>
+    </footer>
+</body>
+</html>
