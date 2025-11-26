@@ -27,7 +27,6 @@
             overflow: hidden;
         }
 
-        /* FIXED SVG (encoded) */
         .hero::before {
             content: "";
             position: absolute;
@@ -134,12 +133,45 @@
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
         }
 
-        .highlight-box {
-            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
-            border-left: 4px solid #667eea;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 30px 0;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-card h4 {
+            color: #667eea;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.95em;
+            color: #718096;
+            margin: 0;
         }
 
         .calculator-section {
@@ -158,16 +190,170 @@
             margin-bottom: 20px;
         }
 
+        .calculator-section > p {
+            text-align: center;
+            font-size: 1.2em;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.95;
+        }
+
         .calculator-placeholder {
             background: white;
             border-radius: 12px;
-            padding: 40px;
-            color: #333;
-            min-height: 500px;
+            padding: 32px;
+            color: #1a202c;
+            min-height: 0;
             display: flex;
-            align-items: center;
-            justify-content: center;
             flex-direction: column;
+            gap: 24px;
+        }
+
+        .calculator-placeholder h3 {
+            margin-bottom: 4px;
+            font-size: 1.4em;
+            color: #2d3748;
+        }
+
+        .calculator-subtitle {
+            font-size: 0.95em;
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 20px;
+        }
+
+        .calculator-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .calculator-group label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .calculator-group small {
+            font-size: 0.8em;
+            color: #a0aec0;
+        }
+
+        .calculator-group input {
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+            font-size: 0.95em;
+        }
+
+        .calculator-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculator-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .calculator-actions button {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 20px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+            transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        }
+
+        .calculator-actions button:hover {
+            background: #5563d6;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(102, 126, 234, 0.5);
+        }
+
+        .calculator-actions button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+        }
+
+        .calculator-note {
+            font-size: 0.8em;
+            color: #a0aec0;
+        }
+
+        .results-grid {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .result-card {
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1px solid #e2e8f0;
+            background: #f9fafb;
+            position: relative;
+        }
+
+        .result-card h4 {
+            margin-bottom: 4px;
+            font-size: 0.95em;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .result-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .result-line {
+            font-size: 0.85em;
+            color: #718096;
+        }
+
+        .result-line strong {
+            color: #4a5568;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            background: #c6f6d5;
+            color: #22543d;
+            font-size: 0.7em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .result-card.best {
+            border-color: #48bb78;
+            background: #f0fff4;
+            box-shadow: 0 0 0 1px rgba(72, 187, 120, 0.4);
         }
 
         footer {
@@ -184,11 +370,26 @@
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2em; }
-            .hero p { font-size: 1.1em; }
-            .section h2 { font-size: 1.5em; }
-            .section-header { flex-direction: column; align-items: flex-start; }
-            .calculator-section h2 { font-size: 1.8em; }
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .section h2 {
+                font-size: 1.5em;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .calculator-section h2 {
+                font-size: 1.8em;
+            }
         }
     </style>
 </head>
@@ -199,6 +400,7 @@
     </div>
 
     <div class="container">
+        <!-- Section 1 -->
         <div class="section">
             <div class="section-header">
                 <div class="section-number">1</div>
@@ -208,52 +410,260 @@
             <p>But this narrative glosses over a critical truth: <strong>the real cost depends heavily on where you live</strong>. A single national average doesn't capture the dramatic differences in electricity and gasoline prices across the United States. What's cheap in one state might be expensive in another.</p>
         </div>
 
+        <!-- Section 2 -->
         <div class="section">
             <div class="section-header">
                 <div class="section-number">2</div>
                 <h2>Energy Costs Vary Wildly by State</h2>
             </div>
-            <p>When you look at the data, one pattern becomes immediately clear: <strong>electricity and gas prices change dramatically across state lines</strong>.</p>
+            <p>When you look at the data, one pattern becomes immediately clear: <strong>electricity and gas prices change dramatically across state lines</strong>. Some states offer incredibly cheap electricity, making EV charging a bargain. Others have high electricity rates that diminish the cost advantage significantly.</p>
+            <p>The same volatility applies to gasoline. While everyone experiences price fluctuations at the pump, the baseline price per gallon varies considerably by region due to state taxes, local regulations, and distribution costs.</p>
 
             <div class="chart-placeholder">
-                <img src="Average%20Electricity%20Price.png" width="500">
-                <img src="Average%20Gas%20Price.png" width="500">
+                <p>
+                    <img src="Average%20Electricity%20Price.png" width="500" alt="Average electricity price map">
+                    <img src="Average%20Gas%20Price.png" width="500" alt="Average gas price map">
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Cheapest Electricity</h4>
+                    <div class="stat-value">~9¢</div>
+                    <p>per kWh in select states</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Most Expensive</h4>
+                    <div class="stat-value">~30¢</div>
+                    <p>per kWh in some regions</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Cost Difference</h4>
+                    <div class="stat-value">3x</div>
+                    <p>between cheapest and priciest states</p>
+                </div>
             </div>
         </div>
 
+        <!-- Section 3 -->
         <div class="section">
             <div class="section-header">
                 <div class="section-number">3</div>
                 <h2>Insurance Complicates the Story</h2>
             </div>
-            <p>Even when energy costs favor EVs, another cost enters the picture: <strong>insurance premiums</strong>.</p>
+            <p>Even when energy costs favor EVs, there's another expense that often gets overlooked in basic comparisons: <strong>insurance premiums</strong>.</p>
+            <p>EV insurance tends to run higher than comparable gas or hybrid vehicles. The reasons are straightforward: specialized parts, expensive battery repairs, and newer technology mean higher replacement and repair costs. Insurance companies price policies accordingly.</p>
 
             <div class="chart-placeholder">
-                <img src="InsuranceChart.png" width="800">
+                <p><img src="InsuranceChart.png" width="800" alt="Insurance comparison chart"></p>
             </div>
         </div>
 
+        <!-- Section 4 - Calculator -->
         <div class="calculator-section">
             <div class="section-header" style="margin-bottom: 0;">
                 <div class="section-number">4</div>
                 <h2>See Your True Cost With the Calculator</h2>
             </div>
-            <p>Use this calculator to compare what an EV, hybrid, and traditional gas vehicle would actually cost you based on your state and driving habits.</p>
+            <p>Adjust the sliders and inputs to compare estimated monthly costs for an EV, hybrid, and gasoline vehicle based on your situation.</p>
 
             <div class="calculator-placeholder">
-                <h3>EV Cost Calculator</h3>
-                <p style="color:#718096; margin-top:10px;">Interactive tool coming soon</p>
+                <div>
+                    <h3>EV vs Hybrid vs Gas — Monthly Cost Estimate</h3>
+                    <p class="calculator-subtitle">This is a simplified model using your annual miles, energy prices, efficiency, and insurance.</p>
+                </div>
+
+                <div class="calculator-grid">
+                    <div class="calculator-group">
+                        <label for="milesPerYear">Annual miles driven</label>
+                        <input type="number" id="milesPerYear" value="12000" min="0" step="500">
+                        <small>How many miles you drive in a year.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="electricityPrice">Electricity price ($/kWh)</label>
+                        <input type="number" id="electricityPrice" value="0.16" min="0" step="0.01">
+                        <small>Use your local residential or public charging rate.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="gasPrice">Gasoline price ($/gal)</label>
+                        <input type="number" id="gasPrice" value="3.50" min="0" step="0.05">
+                        <small>Average price per gallon where you live.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="evEfficiency">EV efficiency (kWh / 100 miles)</label>
+                        <input type="number" id="evEfficiency" value="28" min="5" step="1">
+                        <small>Lower is better. Many modern EVs are in the 25–30 range.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="hybridMpg">Hybrid fuel economy (mpg)</label>
+                        <input type="number" id="hybridMpg" value="45" min="10" step="1">
+                        <small>Typical hybrid: 40–55 mpg.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="gasMpg">Gas vehicle fuel economy (mpg)</label>
+                        <input type="number" id="gasMpg" value="30" min="5" step="1">
+                        <small>Typical non-hybrid compact: 25–35 mpg.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="evInsurance">EV insurance ($ / month)</label>
+                        <input type="number" id="evInsurance" value="190" min="0" step="5">
+                        <small>Your estimated monthly premium for an EV.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="hybridInsurance">Hybrid insurance ($ / month)</label>
+                        <input type="number" id="hybridInsurance" value="160" min="0" step="5">
+                        <small>Monthly premium for a comparable hybrid.</small>
+                    </div>
+
+                    <div class="calculator-group">
+                        <label for="gasInsurance">Gas vehicle insurance ($ / month)</label>
+                        <input type="number" id="gasInsurance" value="150" min="0" step="5">
+                        <small>Monthly premium for a comparable gas vehicle.</small>
+                    </div>
+                </div>
+
+                <div class="calculator-actions">
+                    <button id="calculateBtn" type="button">
+                        <span>Calculate monthly cost</span>
+                    </button>
+                    <span class="calculator-note">Energy + insurance only. Taxes, purchase price, and maintenance are not included yet.</span>
+                </div>
+
+                <div id="results" class="results-grid" aria-live="polite"></div>
             </div>
         </div>
 
+        <!-- Bottom line -->
         <div class="section">
             <h2 style="text-align: center; color: #2d3748; margin-bottom: 30px;">The Bottom Line</h2>
-            <p style="text-align: center; font-size: 1.2em; max-width: 800px; margin: 0 auto;">EVs can be a great financial choice for some drivers — but it depends on where you live and how you drive. Now you have the data to decide for yourself.</p>
+            <p style="text-align: center; font-size: 1.2em; max-width: 800px; margin: 0 auto;">
+                EVs can be a great financial choice for some drivers, but the difference isn't the technology, it's your specific situation.
+                This calculator helps you see how EVs, hybrids, and gas vehicles stack up for you.
+            </p>
         </div>
     </div>
 
     <footer>
-        <p>Data-driven insights about "The Real Cost of EVs" — MICA DAV Capstone Project 2025</p>
+        <p>Data-driven insights about "The Real Cost of EVs" | MICA DAV Capstone Project 2025</p>
     </footer>
+
+    <script>
+        function formatMoney(value) {
+            if (!isFinite(value)) return "$–";
+            return "$" + value.toFixed(0);
+        }
+
+        function calculateMonthlyCosts() {
+            const milesPerYear = parseFloat(document.getElementById("milesPerYear").value) || 0;
+            const electricityPrice = parseFloat(document.getElementById("electricityPrice").value) || 0;
+            const gasPrice = parseFloat(document.getElementById("gasPrice").value) || 0;
+            const evEfficiency = parseFloat(document.getElementById("evEfficiency").value) || 0; // kWh / 100 mi
+            const hybridMpg = parseFloat(document.getElementById("hybridMpg").value) || 0;
+            const gasMpg = parseFloat(document.getElementById("gasMpg").value) || 0;
+            const evInsurance = parseFloat(document.getElementById("evInsurance").value) || 0;
+            const hybridInsurance = parseFloat(document.getElementById("hybridInsurance").value) || 0;
+            const gasInsurance = parseFloat(document.getElementById("gasInsurance").value) || 0;
+
+            const months = 12;
+
+            // EV energy cost
+            const evKwhPerYear = (milesPerYear * evEfficiency) / 100;
+            const evEnergyCostPerYear = evKwhPerYear * electricityPrice;
+            const evEnergyPerMonth = evEnergyCostPerYear / months;
+            const evMonthlyTotal = evEnergyPerMonth + evInsurance;
+
+            // Hybrid fuel cost
+            const hybridGallonsPerYear = hybridMpg > 0 ? milesPerYear / hybridMpg : Infinity;
+            const hybridFuelCostPerYear = hybridGallonsPerYear * gasPrice;
+            const hybridFuelPerMonth = hybridFuelCostPerYear / months;
+            const hybridMonthlyTotal = hybridFuelPerMonth + hybridInsurance;
+
+            // Gas fuel cost
+            const gasGallonsPerYear = gasMpg > 0 ? milesPerYear / gasMpg : Infinity;
+            const gasFuelCostPerYear = gasGallonsPerYear * gasPrice;
+            const gasFuelPerMonth = gasFuelCostPerYear / months;
+            const gasMonthlyTotal = gasFuelPerMonth + gasInsurance;
+
+            const options = [
+                {
+                    key: "ev",
+                    label: "Electric Vehicle (EV)",
+                    monthlyTotal: evMonthlyTotal,
+                    energyPerMonth: evEnergyPerMonth,
+                    insurancePerMonth: evInsurance
+                },
+                {
+                    key: "hybrid",
+                    label: "Hybrid Vehicle",
+                    monthlyTotal: hybridMonthlyTotal,
+                    energyPerMonth: hybridFuelPerMonth,
+                    insurancePerMonth: hybridInsurance
+                },
+                {
+                    key: "gas",
+                    label: "Gasoline Vehicle",
+                    monthlyTotal: gasMonthlyTotal,
+                    energyPerMonth: gasFuelPerMonth,
+                    insurancePerMonth: gasInsurance
+                }
+            ];
+
+            const validOptions = options.filter(o => isFinite(o.monthlyTotal));
+            let bestKey = null;
+            if (validOptions.length > 0) {
+                bestKey = validOptions.reduce((min, o) =>
+                    o.monthlyTotal < min.monthlyTotal ? o : min
+                ).key;
+            }
+
+            const resultsContainer = document.getElementById("results");
+            resultsContainer.innerHTML = "";
+
+            options.forEach(option => {
+                const card = document.createElement("div");
+                card.className = "result-card" + (option.key === bestKey ? " best" : "");
+
+                const title = document.createElement("h4");
+                title.textContent = option.label;
+
+                const value = document.createElement("div");
+                value.className = "result-value";
+                value.textContent = formatMoney(option.monthlyTotal) + "/mo";
+
+                const lineEnergy = document.createElement("div");
+                lineEnergy.className = "result-line";
+                lineEnergy.innerHTML = "<strong>Energy:</strong> " + formatMoney(option.energyPerMonth) + "/mo";
+
+                const lineInsurance = document.createElement("div");
+                lineInsurance.className = "result-line";
+                lineInsurance.innerHTML = "<strong>Insurance:</strong> " + formatMoney(option.insurancePerMonth) + "/mo";
+
+                card.appendChild(title);
+                if (option.key === bestKey) {
+                    const badge = document.createElement("div");
+                    badge.className = "badge";
+                    badge.textContent = "Lowest monthly cost";
+                    card.appendChild(badge);
+                }
+                card.appendChild(value);
+                card.appendChild(lineEnergy);
+                card.appendChild(lineInsurance);
+
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        document.getElementById("calculateBtn").addEventListener("click", calculateMonthlyCosts);
+
+        // Initial calculation on load so it's not empty
+        calculateMonthlyCosts();
+    </script>
 </body>
 </html>
