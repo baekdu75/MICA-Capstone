@@ -270,47 +270,6 @@
             padding: 8px;
         }
 
-        .advanced-toggle {
-            margin: 24px 0 12px;
-            padding: 12px 16px;
-            background: #f5f5fa;
-            border: 1px solid #dcdceb;
-            border-radius: 10px;
-            cursor: pointer;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .advanced-toggle:hover {
-            background: #ececf5;
-        }
-
-        .advanced-toggle-title {
-            font-weight: 600;
-            font-size: 15px;
-        }
-
-        .advanced-toggle-arrow {
-            transition: transform 0.2s;
-            font-size: 18px;
-        }
-
-        .advanced-toggle-arrow.open {
-            transform: rotate(180deg);
-        }
-
-        .advanced-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .advanced-content.open {
-            max-height: 800px;
-        }
-
         .radio-container {
             display: flex;
             gap: 20px;
@@ -544,11 +503,6 @@
                     </div>
                 </div>
 
-                <div class="advanced-toggle" id="advancedToggle">
-                    <span class="advanced-toggle-title">⚙️ Advanced configuration</span>
-                    <span class="advanced-toggle-arrow">▼</span>
-                </div>
-
             <div class="panel">
                         <div>
                             <label>Do you need to install a home EV charger?</label>
@@ -731,15 +685,6 @@
                     recalc();
                 }
             });
-        });
-
-        // ---------- Advanced toggle ----------
-        const advToggle = $('advancedToggle');
-        const advContent = $('advancedContent');
-        const advArrow = advToggle.querySelector('.advanced-toggle-arrow');
-        advToggle.addEventListener('click', () => {
-            advContent.classList.toggle('open');
-            advArrow.classList.toggle('open');
         });
 
         // ---------- Radio bindings ----------
