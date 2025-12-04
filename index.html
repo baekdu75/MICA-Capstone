@@ -526,8 +526,8 @@
                                 <span id="publicChargePctValue">20</span>% at public chargers (assumed $0.50/kWh)
                             </div>
                         </div>
-
                 </div>
+                <h2>Monthly Cost ($)</h2>
                 <canvas id="chart" height="350"></canvas>
             </div>
         </div>
@@ -747,7 +747,7 @@
                     y: {
                         stacked: true,
                         beginAtZero: true,
-                        title: { display: true, text: '$ / month' }
+                        title: { display: false, text: '$ / month' }
                     }
                 },
                 plugins: {
