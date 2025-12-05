@@ -8,7 +8,7 @@
     <!-- Chart.js + Papa Parse (CDNs) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
         * {
             margin: 0;
@@ -399,25 +399,6 @@
                 <p><p>
                 <img src="Average%20Gas%20Price2.png" width="600" alt="Average gas price map"></p>
             </div>
-<!--
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4>Cheapest Electricity</h4>
-                    <div class="stat-value">~8¢</div>
-                    <p>per kWh in select states</p>
-                </div>
-                <div class="stat-card">
-                    <h4>Most Expensive</h4>
-                    <div class="stat-value">~25¢</div>
-                    <p>per kWh in some regions</p>
-                </div>
-                <div class="stat-card">
-                    <h4>Cost Difference</h4>
-                    <div class="stat-value">3x</div>
-                    <p>between cheapest and priciest states</p>
-                </div>
-            </div>
--->
         </div>
 
         <!-- Section 3 -->
@@ -502,32 +483,32 @@
                     </div>
                 </div>
 
-            <div class="panel">
-                        <div>
-                            <label>Do you need to install a home EV charger?</label>
-                            <div class="radio-container">
-                                <div class="radio-option">
-                                    <input type="radio" id="needsChargerYes" name="needsCharger" value="yes">
-                                    <label for="needsChargerYes">Yes</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" id="needsChargerNo" name="needsCharger" value="no" checked>
-                                    <label for="needsChargerNo">No</label>
-                                </div>
+                <div class="panel">
+                    <div>
+                        <label>Do you need to install a home EV charger?</label>
+                        <div class="radio-container">
+                            <div class="radio-option">
+                                <input type="radio" id="needsChargerYes" name="needsCharger" value="yes">
+                                <label for="needsChargerYes">Yes</label>
                             </div>
-                            <div class="hint">If yes, we’ll add an estimated $1,500 charger cost (amortized over 10 years).</div>
+                            <div class="radio-option">
+                                <input type="radio" id="needsChargerNo" name="needsCharger" value="no" checked>
+                                <label for="needsChargerNo">No</label>
+                            </div>
                         </div>
+                        <div class="hint">If yes, we’ll add an estimated $1,500 charger cost (amortized over 10 years).</div>
+                    </div>
 
-                        <div>
-                            <label for="homeChargePct">Percent of your charging done at home</label>
-                            <input id="homeChargePct" type="range" min="0" max="100" value="80">
-                            <div class="hint">
-                                <span id="homeChargePctValue">80</span>% at home,
-                                <span id="publicChargePctValue">20</span>% at public chargers (assumed $0.50/kWh)
-                            </div>
+                    <div>
+                        <label for="homeChargePct">Percent of your charging done at home</label>
+                        <input id="homeChargePct" type="range" min="0" max="100" value="80">
+                        <div class="hint">
+                            <span id="homeChargePctValue">80</span>% at home,
+                            <span id="publicChargePctValue">20</span>% at public chargers (assumed $0.50/kWh)
                         </div>
+                    </div>
                 </div>
-                <!-- <lable>Estimated Monthly Cost Breakdown ($/month)</label> -->
+
                 <canvas id="chart" height="350"></canvas>
             </div>
         </div>
@@ -732,7 +713,7 @@
         const chart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['EV', 'Hybrid', 'Gasoline'],
+                labels: ['EV', 'Hybrid', 'Gas'],
                 datasets: [
                     { label: 'Fuel/Charge', data: [0, 0, 0], backgroundColor: '#7c6cf3' },
                     { label: 'Insurance', data: [0, 0, 0], backgroundColor: '#b9a7ff' },
@@ -740,19 +721,48 @@
                     { label: 'Charger (amortized)', data: [0, 0, 0], backgroundColor: '#ffa07a' }
                 ]
             },
+            plugins: [ChartDataLabels],
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 24 } }, // room for labels above bars
                 scales: {
-                    x: { stacked: true },
+                    x: {
+                        stacked: true,
+                        grid: { display: false },
+                        border: { display: false }
+                    },
                     y: {
                         stacked: true,
                         beginAtZero: true,
-                        title: { display: false, text: '$ / month' }
+                        display: false,        // hide y-axis entirely
+                        grid: { display: false },
+                        border: { display: false }
                     }
                 },
                 plugins: {
                     legend: { position: 'bottom' },
-                    tooltip: { mode: 'index', intersect: false }
+                    tooltip: { mode: 'index', intersect: false },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: (value, context) => {
+                            // Only label once per bar (on the top dataset)
+                            const datasets = context.chart.data.datasets;
+                            const lastDatasetIndex = datasets.length - 1;
+                            if (context.datasetIndex !== lastDatasetIndex) return '';
+
+                            const dataIndex = context.dataIndex;
+                            let total = 0;
+                            datasets.forEach(ds => {
+                                const v = ds.data[dataIndex];
+                                if (typeof v === 'number' && !isNaN(v)) total += v;
+                            });
+                            return `$${total.toFixed(0)}`;
+                        },
+                        clamp: true,
+                        font: { weight: '600' }
+                    }
                 }
             }
         });
