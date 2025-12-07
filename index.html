@@ -855,28 +855,51 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
         }
 
         // ---------- Recalc ----------
-        function recalc() {
-            const state = $('state').value;
-            const miles = $('miles').value;
+function recalc() {
+    const state = $('state').value;
+    const miles = parseInt($('miles').value, 10) || 0;
 
-            if (state && miles) {
-                const result = monthlyCosts({
-                    state,
-                    annualMiles: parseInt(miles, 10) || 0,
-                    needsCharger: $('needsChargerYes').checked,
-                    homeChargePct: parseInt($('homeChargePct').value, 10) || 0
-                });
+    // Always compute result (we’ll decide what to show below)
+    const result = monthlyCosts({
+        state,
+        annualMiles: miles,
+        needsCharger: $('needsChargerYes').checked,
+        homeChargePct: parseInt($('homeChargePct').value, 10) || 0
+    });
 
-                chart.data.datasets[0].data = [result.evFuelMonth, result.hybridFuelMonth, result.gasFuelMonth];
-                chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
-            }
+    if (state && miles) {
+        // Fuel / charge (only when both are selected)
+        chart.data.datasets[0].data = [
+            result.evFuelMonth,
+            result.hybridFuelMonth,
+            result.gasFuelMonth
+        ];
 
-            const insurance = getInsuranceByModel();
-            chart.data.datasets[1].data = [insurance.evIns, insurance.hybridIns, insurance.gasIns];
-            chart.data.datasets[2].data = [result.evMaintMonth, result.hybridMaintMonth, result.gasMaintMonth];
+        // Charger
+        chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+    } else {
+        // Before selections, keep these at zero so nothing weird shows
+        chart.data.datasets[0].data = [0, 0, 0];
+        chart.data.datasets[3].data = [0, 0, 0];
+    }
 
-            chart.update();
-        }
+    // Insurance (based on model selection)
+    const insurance = getInsuranceByModel();
+    chart.data.datasets[1].data = [
+        insurance.evIns,
+        insurance.hybridIns,
+        insurance.gasIns
+    ];
+
+    // Dynamic maintenance based on miles
+    chart.data.datasets[2].data = [
+        result.evMaintMonth,
+        result.hybridMaintMonth,
+        result.gasMaintMonth
+    ];
+
+    chart.update();
+}
 
         // ---------- Bind events ----------
         ['state', 'miles', 'homeChargePct', 'evModel', 'hybridModel', 'gasModel'].forEach(id => {
