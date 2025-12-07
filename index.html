@@ -131,24 +131,18 @@
             justify-content: center;
             flex-direction: column;
             transition: all 0.3s ease;
-            
-            max-width: 900px;   /* or 400px, 600px – whatever you like */
-            width: 100%;        /* keeps it responsive on small screens */
-            margin: 0 auto;     /* centers it inside its container */
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
         }
-        
+
         .chart-placeholder img {
             max-width: 90%;
             height: auto;
             margin: 0 auto;
             display: block;
         }
-/*
-        .chart-placeholder:hover {
-            border-color: #ffffff;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
-        }
-*/
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -238,7 +232,6 @@
             margin-bottom: 10px;
         }
 
-        /* Calculator layout (from 2nd file) */
         .panel {
             display: grid;
             gap: 16px;
@@ -253,7 +246,7 @@
             font-weight: 650;
             display: block;
             margin-bottom: 4px;
-            size: 24;    
+            size: 24;
         }
 
         select,
@@ -283,12 +276,13 @@
             border-radius: 12px;
             padding: 8px;
         }
-        
+
         #chart {
-    width: 100%;
-    height: 450px;      /* target height */
-    max-height: 450px;  /* do not grow taller than this */
-}
+            width: 100%;
+            height: 450px;
+            max-height: 450px;
+        }
+
         .radio-container {
             display: flex;
             gap: 20px;
@@ -399,7 +393,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 But an <strong>EV battery is much larger than a phone battery</strong>, so it takes longer to charge and uses much more electricity, 
                 which is billed by the unit called kilowatt-hours (kWh).</p>
             <br>
-               <div class="chart-placeholder">
+            <div class="chart-placeholder">
                 <p>
                     <img src="EV_Scale.png">
                 </p>
@@ -417,9 +411,9 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 But in the U.S., <strong>a major share of the electricity used to charge EVs still comes from fossil fuels</strong>, 
                 so in many places the energy behind the plug is not as clean as the marketing suggests.</p>
             <br>
-               <div class="chart-placeholder">
+            <div class="chart-placeholder">
                 <p><br>
-                    <img src="EVSource.png" >
+                    <img src="EVSource.png">
                 </p>
             </div>
         </div>
@@ -435,9 +429,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             <br>
             <div class="chart-placeholder">
                 <p><br>
-                <img src="Average%20Electricity%20Price2.png" alt="Average electricity price map">
-                <br><br>
-                <img src="Average%20Gas%20Price2.png" alt="Average gas price map"></p>
+                    <img src="Average%20Electricity%20Price2.png" alt="Average electricity price map">
+                    <br><br>
+                    <img src="Average%20Gas%20Price2.png" alt="Average gas price map">
+                </p>
             </div>
         </div>
 
@@ -465,7 +460,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             <p>Based on everything above, this calculator estimates what an EV, hybrid, and gasoline vehicle would actually cost you each month. Adjust the inputs to see how your driving habits and location change the true cost of each option.</p>
             <br>
             <div class="calculator-placeholder">
-                <!-- <div id="csvStatus"></div>-->
+                <!-- <div id="csvStatus"></div> -->
                 <div class="panel">
                     <div>
                         <label for="state">Select your state of residence</label>
@@ -503,10 +498,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                         <div class="hint">Choose your hybrid vehicle.</div>
                         <select id="hybridModel">
                             <option value="Toyota Prius" selected>Toyota Prius</option>
-                            <option value="Toyota RAV4">Toyota RAV4 Hybrid</option>
+                            <option value="Toyota RAV4 Hybrid">Toyota RAV4 Hybrid</option>
                             <option value="Honda Accord Hybrid">Honda Accord Hybrid</option>
-                            <option value="Toyota Camry">Toyota Camry Hybrid</option>
-                            <option value="Toyota Highlander">Toyota Highlander Hybrid</option>
+                            <option value="Toyota Camry Hybrid">Toyota Camry Hybrid</option>
+                            <option value="Toyota Highlander Hybrid">Toyota Highlander Hybrid</option>
                         </select>
                         <img id="hybridImage" class="vehicle-image" src="https://via.placeholder.com/300x150/b9a7ff/ffffff?text=Toyota+Prius" alt="Hybrid">
                     </div>
@@ -602,17 +597,19 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             chargerLifeMonths: 120 // 10 years
         };
 
-        // Vehicle image URLs (replace with your local PNGs if you want)
+        // Vehicle image URLs
         const VEHICLE_IMAGES = {
             'Model 3': 'Model-3.png',
             'Model Y': 'Model-Y.png',
             'Model S': 'Model-S.png',
             'Model X': 'Model-X.png',
             'Toyota Prius': 'Toyota_Prius.png',
-            'Toyota RAV4': 'RAV4-Hybrid.png', // used for both hybrid + gas RAV4
+            'Toyota RAV4 Hybrid': 'RAV-4.png',
+            'Toyota RAV4': 'RAV4.png',
             'Honda Accord Hybrid': 'Accord-Hybrid.png',
-            'Toyota Highlander': 'Highlander-Hybrid.png',
+            'Toyota Camry Hybrid': 'Camry-Hybrid.png',
             'Toyota Camry': 'Camry-Hybrid.png',
+            'Toyota Highlander Hybrid': 'Highlander-Hybrid.png',
             'Honda Civic': 'Honda_Civic.png',
             'Honda CR-V': 'CR-V.png',
             'Chevy Equinox': 'Equinox.png'
@@ -746,16 +743,24 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             const gasFuelMonth = gasFuelYear / 12;
 
             const chargerMonthly = needsCharger ? (CHARGER_COST / DEFAULTS.chargerLifeMonths) : 0;
-            
-            // --- NEW: dynamic maintenance based on miles ---
-    const BASE_MILES = 12000; // assume your defaults were for 12k miles/year
-    const milesFactor = BASE_MILES ? (annualMiles / BASE_MILES) : 0;
 
-    const evMaintMonth      = DEFAULTS.maintEV      * milesFactor;
-    const hybridMaintMonth  = DEFAULTS.maintHybrid  * milesFactor;
-    const gasMaintMonth     = DEFAULTS.maintGas     * milesFactor;
-            
-            return { evFuelMonth, hybridFuelMonth, gasFuelMonth, chargerMonthly, evMaintMonth, hybridMaintMonth, gasMaintMonth };
+            // Dynamic maintenance based on miles
+            const BASE_MILES = 12000; // assume defaults are for 12k miles/year
+            const milesFactor = BASE_MILES ? (annualMiles / BASE_MILES) : 0;
+
+            const evMaintMonth = DEFAULTS.maintEV * milesFactor;
+            const hybridMaintMonth = DEFAULTS.maintHybrid * milesFactor;
+            const gasMaintMonth = DEFAULTS.maintGas * milesFactor;
+
+            return {
+                evFuelMonth,
+                hybridFuelMonth,
+                gasFuelMonth,
+                chargerMonthly,
+                evMaintMonth,
+                hybridMaintMonth,
+                gasMaintMonth
+            };
         }
 
         // ---------- Chart ----------
@@ -783,7 +788,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                         border: { display: false },
                         ticks: {
                             font: {
-                                size: 18, //Chart label on X-axis
+                                size: 18,
                                 weight: '600'
                             }
                         }
@@ -791,7 +796,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                     y: {
                         stacked: true,
                         beginAtZero: true,
-                        display: false,        // hide y-axis entirely
+                        display: false,
                         grid: { display: false },
                         border: { display: false }
                     }
@@ -803,7 +808,6 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                         anchor: 'end',
                         align: 'end',
                         formatter: (value, context) => {
-                            // Only label once per bar (on the top dataset)
                             const datasets = context.chart.data.datasets;
                             const lastDatasetIndex = datasets.length - 1;
                             if (context.datasetIndex !== lastDatasetIndex) return '';
@@ -837,13 +841,19 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 'Model Y': DEFAULTS.insTeslaY,
                 'Model S': DEFAULTS.insTeslaS,
                 'Model X': DEFAULTS.insTeslaX,
+
+                // Hybrids
                 'Toyota Prius': DEFAULTS.insPrius,
-                'Toyota RAV4': DEFAULTS.insRAV4H,
+                'Toyota RAV4 Hybrid': DEFAULTS.insRAV4H,
                 'Honda Accord Hybrid': DEFAULTS.insAccordH,
-                'Toyota Camry': DEFAULTS.insCamryH,
-                'Toyota Highlander': DEFAULTS.insHighlanderH,
+                'Toyota Camry Hybrid': DEFAULTS.insCamryH,
+                'Toyota Highlander Hybrid': DEFAULTS.insHighlanderH,
+
+                // Gas
                 'Honda Civic': DEFAULTS.insCivic,
                 'Honda CR-V': DEFAULTS.insCRV,
+                'Toyota Camry': DEFAULTS.insCamry,
+                'Toyota RAV4': DEFAULTS.insRAV4,
                 'Chevy Equinox': DEFAULTS.insEquinox
             };
 
@@ -855,51 +865,44 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
         }
 
         // ---------- Recalc ----------
-function recalc() {
-    const state = $('state').value;
-    const miles = parseInt($('miles').value, 10) || 0;
+        function recalc() {
+            const state = $('state').value;
+            const miles = parseInt($('miles').value, 10) || 0;
 
-    // Always compute result (we’ll decide what to show below)
-    const result = monthlyCosts({
-        state,
-        annualMiles: miles,
-        needsCharger: $('needsChargerYes').checked,
-        homeChargePct: parseInt($('homeChargePct').value, 10) || 0
-    });
+            const result = monthlyCosts({
+                state,
+                annualMiles: miles,
+                needsCharger: $('needsChargerYes').checked,
+                homeChargePct: parseInt($('homeChargePct').value, 10) || 0
+            });
 
-    if (state && miles) {
-        // Fuel / charge (only when both are selected)
-        chart.data.datasets[0].data = [
-            result.evFuelMonth,
-            result.hybridFuelMonth,
-            result.gasFuelMonth
-        ];
+            if (state && miles) {
+                chart.data.datasets[0].data = [
+                    result.evFuelMonth,
+                    result.hybridFuelMonth,
+                    result.gasFuelMonth
+                ];
+                chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
+            } else {
+                chart.data.datasets[0].data = [0, 0, 0];
+                chart.data.datasets[3].data = [0, 0, 0];
+            }
 
-        // Charger
-        chart.data.datasets[3].data = [result.chargerMonthly, 0, 0];
-    } else {
-        // Before selections, keep these at zero so nothing weird shows
-        chart.data.datasets[0].data = [0, 0, 0];
-        chart.data.datasets[3].data = [0, 0, 0];
-    }
+            const insurance = getInsuranceByModel();
+            chart.data.datasets[1].data = [
+                insurance.evIns,
+                insurance.hybridIns,
+                insurance.gasIns
+            ];
 
-    // Insurance (based on model selection)
-    const insurance = getInsuranceByModel();
-    chart.data.datasets[1].data = [
-        insurance.evIns,
-        insurance.hybridIns,
-        insurance.gasIns
-    ];
+            chart.data.datasets[2].data = [
+                result.evMaintMonth,
+                result.hybridMaintMonth,
+                result.gasMaintMonth
+            ];
 
-    // Dynamic maintenance based on miles
-    chart.data.datasets[2].data = [
-        result.evMaintMonth,
-        result.hybridMaintMonth,
-        result.gasMaintMonth
-    ];
-
-    chart.update();
-}
+            chart.update();
+        }
 
         // ---------- Bind events ----------
         ['state', 'miles', 'homeChargePct', 'evModel', 'hybridModel', 'gasModel'].forEach(id => {
