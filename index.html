@@ -390,7 +390,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             <p>An electric vehicle uses an electric motor powered by a large battery that stores energy for driving. <br> 
                 That battery has to be charged with electricity, just like your phone, by plugging into an outlet. 
                 But the battery is <strong>much larger than a phone battery</strong>, so it takes longer to charge and 
-                pulls a lot more electricity, which shows up on your bill at your rate.</p>
+                pulls a lot more electricity, which will show up on the bill at your rate.</p>
             <br>
                <div class="chart-placeholder">
                 <p>
@@ -398,7 +398,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 </p>
             </div>
         </div>
-
+<br>
         
         <!-- Section 2 -->
         <div class="section">
@@ -417,7 +417,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 </p>
             </div>
         </div>
-
+<br>
         <!-- Section 3 -->
         <div class="section">
             <div class="section-header">
@@ -434,7 +434,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 <img src="Average%20Gas%20Price2.png" width="800" alt="Average gas price map"></p>
             </div>
         </div>
-
+<br>
         <!-- Section 4 -->
         <div class="section">
             <div class="section-header">
@@ -448,7 +448,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 <p><img src="InsuranceChart2.png" width="800" alt="Insurance comparison chart"></p>
             </div>
         </div>
-
+<br>
         <!-- Section 5 - Calculator -->
         <div class="section">
             <div class="section-header">
@@ -469,11 +469,11 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                         <label for="miles">Choose your driving profile</label>
                         <select id="miles">
                             <option value="">Select your driving profile --</option>
-                            <option value="5000">Minimal (5,000 miles/yr) - 1~2 days/week</option>
-                            <option value="7000">Light (7,000 miles/yr) - 2~3 days/week</option>
-                            <option value="10000">Typical (10,000 miles/yr) - 4~5 days/week</option>
-                            <option value="13000">Heavy Commute (13,000 miles/yr) - Daily commute</option>
-                            <option value="18000">High Mileage (18,000 miles/yr) - Frequent trips</option>
+                            <option value="5000">Minimal (5,000 miles/yr) 1~2 days/week</option>
+                            <option value="7000">Light (7,000 miles/yr) 2~3 days/week</option>
+                            <option value="10000">Typical (10,000 miles/yr) 4~5 days/week</option>
+                            <option value="13000">Heavy Commute (13,000 miles/yr) Daily commute</option>
+                            <option value="18000">High Mileage (18,000 miles/yr) Frequent trips</option>
                         </select>
                     </div>
                 </div>
@@ -547,7 +547,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 <canvas id="chart" height="450"></canvas>
             </div>
         </div>
-
+<br>
         <!-- Bottom line -->
         <div class="section">
             <h2 style="text-align: center; color: #2d3748; margin-bottom: 30px;">The Bottom Line</h2>
@@ -619,7 +619,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             stateSel.innerHTML = '';
             const emptyOption = document.createElement('option');
             emptyOption.value = '';
-            emptyOption.textContent = '-- Select a state --';
+            emptyOption.textContent = 'Select a state --';
             stateSel.appendChild(emptyOption);
 
             Object.keys(electricityCentsPerKwhByState).sort().forEach(s => {
@@ -749,10 +749,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             data: {
                 labels: ['EV', 'Hybrid', 'Gas'],
                 datasets: [
-                    { label: 'Fuel/Charge', data: [0, 0, 0], backgroundColor: '#7c6cf3' },
-                    { label: 'Insurance', data: [0, 0, 0], backgroundColor: '#b9a7ff' },
-                    { label: 'Maintenance', data: [0, 0, 0], backgroundColor: '#e1d8ff' },
-                    { label: 'Charger (amortized)', data: [0, 0, 0], backgroundColor: '#ffa07a' }
+                    { label: 'Fuel/Charge', data: [0, 0, 0], backgroundColor: '#4d73c7' },
+                    { label: 'Insurance', data: [0, 0, 0], backgroundColor: '#7a93c9' },
+                    { label: 'Maintenance', data: [0, 0, 0], backgroundColor: '#adb8d2' },
+                    { label: 'Charger', data: [0, 0, 0], backgroundColor: '#0FB9B1' }
                 ]
             },
             plugins: [ChartDataLabels],
