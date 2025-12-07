@@ -596,8 +596,8 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             insEV: 200,          // fallback average EV insurance (monthly)
             insHybrid: 130,
             insGas: 120,
-            maintEV: 25,
-            maintHybrid: 45,
+            maintEV: 35,
+            maintHybrid: 50,
             maintGas: 60,
             chargerLifeMonths: 120 // 10 years
         };
@@ -746,8 +746,16 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             const gasFuelMonth = gasFuelYear / 12;
 
             const chargerMonthly = needsCharger ? (CHARGER_COST / DEFAULTS.chargerLifeMonths) : 0;
+            
+            // --- NEW: dynamic maintenance based on miles ---
+    const BASE_MILES = 12000; // assume your defaults were for 12k miles/year
+    const milesFactor = BASE_MILES ? (annualMiles / BASE_MILES) : 0;
 
-            return { evFuelMonth, hybridFuelMonth, gasFuelMonth, chargerMonthly };
+    const evMaintMonth      = DEFAULTS.maintEV      * milesFactor;
+    const hybridMaintMonth  = DEFAULTS.maintHybrid  * milesFactor;
+    const gasMaintMonth     = DEFAULTS.maintGas     * milesFactor;
+            
+            return { evFuelMonth, hybridFuelMonth, gasFuelMonth, chargerMonthly, evMaintMonth, hybridMaintMonth, gasMaintMonth };
         }
 
         // ---------- Chart ----------
@@ -865,7 +873,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
 
             const insurance = getInsuranceByModel();
             chart.data.datasets[1].data = [insurance.evIns, insurance.hybridIns, insurance.gasIns];
-            chart.data.datasets[2].data = [DEFAULTS.maintEV, DEFAULTS.maintHybrid, DEFAULTS.maintGas];
+            chart.data.datasets[2].data = [result.evMaintMonth, result.hybridMaintMonth, result.gasMaintMonth];
 
             chart.update();
         }
