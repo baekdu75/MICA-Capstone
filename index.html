@@ -805,7 +805,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                     }
                 },
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: { 
+                            position: 'bottom', 
+                            reverse: true   // 👈 this flips the legend order
+                            },
                     tooltip: { mode: 'index', intersect: false },
                     datalabels: {
                         anchor: 'end',
