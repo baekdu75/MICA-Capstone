@@ -557,8 +557,8 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 <canvas id="chart" height="450"></canvas>
                 
                 <div class="hint">
-                    Disclaimer: These are just estimated costs based on publicly available info. <br>
-                    Real energy prices can vary, and your actual insurance premium will depend on factors like your age and driving record.
+                    Disclaimer: These are just estimated costs based on publicly available info. Real energy prices can vary, 
+                    and your actual insurance premium will depend on factors like your age and driving record.
                 </div>
             </div>
         </div>
@@ -840,7 +840,7 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                                 const v = ds.data[dataIndex];
                                 if (typeof v === 'number' && !isNaN(v)) total += v;
                             });
-                            return `$${total.toFixed(0)}`;
+                            return `$${total.toFixed(2)}`;
                         },
                         clamp: true,
                         font: { 
