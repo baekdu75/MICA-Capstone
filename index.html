@@ -794,10 +794,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
             data: {
                 labels: ['EV', 'Hybrid', 'Gasoline'],
                 datasets: [
-                    { label: 'Fuel/Charge', data: [0, 0, 0], backgroundColor: '#4060a5' },
-                    { label: 'Insurance', data: [0, 0, 0], backgroundColor: '#7a93c9' },
-                    { label: 'Maintenance', data: [0, 0, 0], backgroundColor: '#cde1ec' },
-                    { label: 'Charger', data: [0, 0, 0], backgroundColor: '#d0d0d0' }                    
+                    { label: 'Fuel/Charge', data: [0, 0, 0], backgroundColor: '#4060a5', categoryPercentage: 1 },
+                    { label: 'Insurance', data: [0, 0, 0], backgroundColor: '#7a93c9' , categoryPercentage: 1},
+                    { label: 'Maintenance', data: [0, 0, 0], backgroundColor: '#cde1ec' , categoryPercentage: 1},
+                    { label: 'Charger', data: [0, 0, 0], backgroundColor: '#d0d0d0' , categoryPercentage: 1}                    
                   ]
             },
             plugins: [ChartDataLabels],
