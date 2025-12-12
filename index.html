@@ -457,7 +457,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                 <p><img src="InsuranceChart2.png" alt="Insurance comparison chart"></p>
             </div>
             <br><br>
-            <p>When we look at average annual insurance rates for the top 50 models sold in the U.S., <strong>EVs consistently cost more than comparable non-electric vehicles</strong> of the same body type. </p>
+            <p>By looking at the average annual insurance rates for each body type among the top 50 models, 
+                we can see that <strong>EVs consistently cost more to insure than comparable non-electric vehicles </strong> of the same body type. 
+                The gap between EV and non-EV premiums is large enough that it can wipe out much of the savings from cheaper electricity 
+                compared to gasoline.</p>
             <br>
             <div class="chart-placeholder">
                 <br>
@@ -809,8 +812,8 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                         border: { display: false },
                         ticks: {
                             font: {
-                                size: 14,
-                                weight: '500'
+                                size: 18,
+                                weight: '700'
                             }
                         }
                     },
@@ -849,9 +852,10 @@ This page shows what actually powers an EV, how electricity and gasoline prices 
                             return `$${total.toFixed(0)}`;
                         },
                         clamp: true,
+                        // Label above chart
                         font: { 
-                            size: 20,
-                            weight: '700' 
+                            size: 16,
+                            weight: '500' 
                         }
                     }
                 }
